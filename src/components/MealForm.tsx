@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type SubmitEvent } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { Meal, MealIngredient } from '../types';
 import { useAppStore } from '../store/useAppStore';
-import { mealMacrosPerServing } from '../utils/macros';
+import { defaultAmountForFood, mealMacrosPerServing } from '../utils/macros';
 import MacroBadges from './MacroBadges';
+import AmountInput from './AmountInput';
 
 export type MealFormValues = Omit<Meal, 'id' | 'createdAt'>;
 
@@ -24,7 +25,7 @@ export default function MealForm({
   const [cuisineId, setCuisineId] = useState<string | null>(initial?.cuisineId ?? null);
   const [favourite, setFavourite] = useState(initial?.favourite ?? false);
   const [ingredients, setIngredients] = useState<MealIngredient[]>(
-    initial?.ingredients ?? (foods[0] ? [{ foodId: foods[0].id, quantity: 100 }] : [])
+    initial?.ingredients ?? (foods[0] ? [{ foodId: foods[0].id, amount: defaultAmountForFood() }] : [])
   );
   const [notes, setNotes] = useState(initial?.notes ?? '');
 
@@ -55,10 +56,10 @@ export default function MealForm({
 
   function addIngredient() {
     if (foods.length === 0) return;
-    setIngredients((prev) => [...prev, { foodId: foods[0].id, quantity: 100 }]);
+    setIngredients((prev) => [...prev, { foodId: foods[0].id, amount: defaultAmountForFood() }]);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim() || ingredients.length === 0) return;
     onSubmit({
@@ -119,7 +120,7 @@ export default function MealForm({
                 <select
                   className={`${inputClass} flex-1`}
                   value={ing.foodId}
-                  onChange={(e) => updateIngredient(i, { foodId: e.target.value })}
+                  onChange={(e) => updateIngredient(i, { foodId: e.target.value, amount: defaultAmountForFood() })}
                 >
                   {foods.map((f) => (
                     <option key={f.id} value={f.id}>
@@ -127,15 +128,7 @@ export default function MealForm({
                     </option>
                   ))}
                 </select>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  className={`${inputClass} w-20`}
-                  value={ing.quantity}
-                  onChange={(e) => updateIngredient(i, { quantity: Number(e.target.value) || 0 })}
-                />
-                <span className="w-10 text-xs text-stone-400">{food?.unit === 'piece' ? 'pc' : food?.unit}</span>
+                <AmountInput food={food} amount={ing.amount} onChange={(amount) => updateIngredient(i, { amount })} />
                 <button
                   type="button"
                   onClick={() => removeIngredient(i)}

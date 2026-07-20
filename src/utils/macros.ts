@@ -1,4 +1,4 @@
-import type { Food, LogEntry, Macros, Meal, MealIngredient } from '../types';
+import type { Food, FoodAmount, LogEntry, Macros, Meal, MealIngredient } from '../types';
 
 const ZERO: Macros = { calories: 0, protein: 0, carbs: 0, fat: 0 };
 
@@ -20,17 +20,27 @@ export function scaleMacros(m: Macros, factor: number): Macros {
   };
 }
 
-/** Macros for a given quantity of a food, in the food's own unit. */
-export function foodMacrosForQuantity(food: Food, quantity: number): Macros {
-  const base = food.unit === 'piece' ? quantity : quantity / 100;
-  return scaleMacros(food.macrosPer, base);
+/** Converts any FoodAmount (by weight or by piece) into base units (grams/ml) for a food. */
+export function amountToBaseUnits(food: Food, amount: FoodAmount): number {
+  if (amount.mode === 'weight') return amount.quantity;
+  return (food.pieceSize ?? 0) * amount.quantity;
+}
+
+export function defaultAmountForFood(): FoodAmount {
+  return { mode: 'weight', quantity: 100 };
+}
+
+/** Macros for a given amount of a food (by weight or by piece — every food supports weight). */
+export function foodMacrosForAmount(food: Food, amount: FoodAmount): Macros {
+  const baseUnits = amountToBaseUnits(food, amount);
+  return scaleMacros(food.macrosPer100, baseUnits / 100);
 }
 
 export function mealMacrosPerServing(meal: Meal, foodsById: Map<string, Food>): Macros {
   return meal.ingredients.reduce<Macros>((total, ing: MealIngredient) => {
     const food = foodsById.get(ing.foodId);
     if (!food) return total;
-    return addMacros(total, foodMacrosForQuantity(food, ing.quantity));
+    return addMacros(total, foodMacrosForAmount(food, ing.amount));
   }, ZERO);
 }
 
@@ -53,7 +63,7 @@ export function logEntryMacros(
   if (entry.source.type === 'food') {
     const food = foodsById.get(entry.source.foodId);
     if (!food) return ZERO;
-    return foodMacrosForQuantity(food, entry.source.quantity);
+    return foodMacrosForAmount(food, entry.source.amount);
   }
   const meal = mealsById.get(entry.source.mealId);
   if (!meal) return ZERO;

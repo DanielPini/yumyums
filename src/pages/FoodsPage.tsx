@@ -105,9 +105,13 @@ export default function FoodsPage() {
                   <span className={`rounded px-1.5 py-0.5 font-medium ${dietColors[food.dietType]}`}>
                     {food.dietType}
                   </span>
-                  <span>
-                    · per {food.unit === 'piece' ? '1 piece' : `100${food.unit}`}
-                  </span>
+                  <span>· per 100{food.baseUnit}</span>
+                  {food.pieceSize && (
+                    <span>
+                      · {food.pieceLabel ?? '1 piece'} ≈ {food.pieceSize}
+                      {food.baseUnit}
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="flex shrink-0 gap-1 opacity-0 transition-opacity group-hover:opacity-100">
@@ -128,7 +132,7 @@ export default function FoodsPage() {
               </div>
             </div>
             <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
-              <MacroBadges macros={food.macrosPer} />
+              <MacroBadges macros={food.macrosPer100} />
               {food.cuisineIds.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {food.cuisineIds.map((id) => (

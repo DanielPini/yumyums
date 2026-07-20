@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { Food, FoodCategory, DietType, Unit } from '../types';
+import { useState, type SubmitEvent } from 'react';
+import type { BaseUnit, DietType, Food, FoodCategory } from '../types';
 import { useAppStore } from '../store/useAppStore';
 
 const categories: FoodCategory[] = [
@@ -8,8 +8,10 @@ const categories: FoodCategory[] = [
   'Fruit',
   'Legume',
   'Dairy',
+  'Eggs',
   'Nuts & Seeds',
   'Protein',
+  'Sweets & Desserts',
   'Fat & Oil',
   'Spice & Condiment',
   'Beverage',
@@ -17,7 +19,7 @@ const categories: FoodCategory[] = [
 ];
 
 const dietTypes: DietType[] = ['vegetarian', 'vegan', 'eggetarian'];
-const units: Unit[] = ['g', 'ml', 'piece'];
+const baseUnits: BaseUnit[] = ['g', 'ml'];
 
 export type FoodFormValues = Omit<Food, 'id' | 'createdAt'>;
 
@@ -35,11 +37,14 @@ export default function FoodForm({
   const [name, setName] = useState(initial?.name ?? '');
   const [category, setCategory] = useState<FoodCategory>(initial?.category ?? 'Vegetable');
   const [dietType, setDietType] = useState<DietType>(initial?.dietType ?? 'vegetarian');
-  const [unit, setUnit] = useState<Unit>(initial?.unit ?? 'g');
-  const [calories, setCalories] = useState(String(initial?.macrosPer.calories ?? ''));
-  const [protein, setProtein] = useState(String(initial?.macrosPer.protein ?? ''));
-  const [carbs, setCarbs] = useState(String(initial?.macrosPer.carbs ?? ''));
-  const [fat, setFat] = useState(String(initial?.macrosPer.fat ?? ''));
+  const [baseUnit, setBaseUnit] = useState<BaseUnit>(initial?.baseUnit ?? 'g');
+  const [calories, setCalories] = useState(String(initial?.macrosPer100.calories ?? ''));
+  const [protein, setProtein] = useState(String(initial?.macrosPer100.protein ?? ''));
+  const [carbs, setCarbs] = useState(String(initial?.macrosPer100.carbs ?? ''));
+  const [fat, setFat] = useState(String(initial?.macrosPer100.fat ?? ''));
+  const [hasPiece, setHasPiece] = useState(!!initial?.pieceSize);
+  const [pieceSize, setPieceSize] = useState(String(initial?.pieceSize ?? ''));
+  const [pieceLabel, setPieceLabel] = useState(initial?.pieceLabel ?? '');
   const [cuisineIds, setCuisineIds] = useState<string[]>(initial?.cuisineIds ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? '');
 
@@ -47,20 +52,22 @@ export default function FoodForm({
     setCuisineIds((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim()) return;
     onSubmit({
       name: name.trim(),
       category,
       dietType,
-      unit,
-      macrosPer: {
+      baseUnit,
+      macrosPer100: {
         calories: Number(calories) || 0,
         protein: Number(protein) || 0,
         carbs: Number(carbs) || 0,
         fat: Number(fat) || 0,
       },
+      pieceSize: hasPiece && Number(pieceSize) > 0 ? Number(pieceSize) : undefined,
+      pieceLabel: hasPiece && pieceLabel.trim() ? pieceLabel.trim() : undefined,
       cuisineIds,
       notes: notes.trim() || undefined,
     });
@@ -98,9 +105,9 @@ export default function FoodForm({
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-stone-500">Unit</label>
-          <select className={inputClass} value={unit} onChange={(e) => setUnit(e.target.value as Unit)}>
-            {units.map((u) => (
+          <label className="mb-1 block text-xs font-medium text-stone-500">Weight unit</label>
+          <select className={inputClass} value={baseUnit} onChange={(e) => setBaseUnit(e.target.value as BaseUnit)}>
+            {baseUnits.map((u) => (
               <option key={u} value={u}>
                 {u}
               </option>
@@ -110,9 +117,7 @@ export default function FoodForm({
       </div>
 
       <div>
-        <p className="mb-1 text-xs font-medium text-stone-500">
-          Macros per {unit === 'piece' ? '1 piece' : `100${unit}`}
-        </p>
+        <p className="mb-1 text-xs font-medium text-stone-500">Macros per 100{baseUnit}</p>
         <div className="grid grid-cols-4 gap-3">
           <div>
             <label className="mb-1 block text-[11px] text-stone-400">Calories</label>
@@ -131,6 +136,25 @@ export default function FoodForm({
             <input type="number" min="0" step="any" className={inputClass} value={fat} onChange={(e) => setFat(e.target.value)} required />
           </div>
         </div>
+      </div>
+
+      <div className="rounded-md border border-stone-200 p-3 dark:border-stone-700">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={hasPiece} onChange={(e) => setHasPiece(e.target.checked)} className="h-4 w-4 rounded accent-brand-600" />
+          Also has a typical item size (e.g. "1 egg", "1 slice")
+        </label>
+        {hasPiece && (
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1 block text-[11px] text-stone-400">Weight of 1 item ({baseUnit})</label>
+              <input type="number" min="0" step="any" className={inputClass} value={pieceSize} onChange={(e) => setPieceSize(e.target.value)} />
+            </div>
+            <div>
+              <label className="mb-1 block text-[11px] text-stone-400">Item label</label>
+              <input className={inputClass} placeholder="1 egg" value={pieceLabel} onChange={(e) => setPieceLabel(e.target.value)} />
+            </div>
+          </div>
+        )}
       </div>
 
       <div>

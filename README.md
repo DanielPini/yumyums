@@ -6,13 +6,14 @@ Built with React + TypeScript + Vite, Tailwind CSS, Zustand (state, persisted to
 
 ## Features
 
-- **Foods** — a searchable, filterable pantry of foods with category, diet type (vegan/vegetarian/eggetarian), unit, and macros per 100g/100ml/piece.
-- **Meals** — build meals from foods + quantities, tag them with a cuisine, mark favourites, see computed macros per serving.
+- **Foods** — a searchable, filterable pantry of foods with category (including Eggs and Sweets & Desserts), diet type (vegan/vegetarian/eggetarian), and macros per 100g/100ml. Any food can also define a typical item size (e.g. "1 egg" ≈ 50g), so quantities can be entered by weight *or* by item everywhere in the app.
+- **Meals** — build meals from foods + quantities (mixing by-weight and by-item ingredients freely), tag them with a cuisine, mark favourites, see computed macros per serving.
 - **Cuisines** — organise foods/meals by cuisine and star your favourites.
 - **Today (log)** — log foods or meals against Breakfast/Lunch/Dinner/Snack for any day, with a calorie ring and protein/carb/fat progress bars against your daily goals (editable via "Goals").
+- **Planner** — a monthly calendar for forward meal planning. Each day has a "+" to quickly add planned foods/meals, and shows a running macro total at the bottom of the cell; clicking a day opens the full day view (same as Today) to review or edit what's planned.
 - **Global search** — the header search box finds matches across foods, meals and cuisines.
 
-Comes pre-seeded with ~29 foods, 7 meals and 6 cuisines across Indian, Italian, Mexican, Mediterranean, East Asian and American cooking so there's something to explore immediately — edit or delete freely.
+Comes pre-seeded with ~50 foods, 8 meals and 6 cuisines across Indian, Italian, Mexican, Mediterranean, East Asian and American cooking, with nutrition figures sourced from USDA-based data, so there's something to explore immediately — edit or delete freely.
 
 ## Getting started
 

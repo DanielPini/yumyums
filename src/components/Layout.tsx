@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { CalendarClock, Salad, UtensilsCrossed, Globe2, Leaf } from 'lucide-react';
+import { CalendarClock, CalendarRange, Salad, UtensilsCrossed, Globe2, Leaf } from 'lucide-react';
 import SearchBar from './SearchBar';
 
 const navItems = [
   { to: '/', label: 'Today', icon: CalendarClock, end: true },
+  { to: '/planner', label: 'Planner', icon: CalendarRange, end: false },
   { to: '/foods', label: 'Foods', icon: Salad, end: false },
   { to: '/meals', label: 'Meals', icon: UtensilsCrossed, end: false },
   { to: '/cuisines', label: 'Cuisines', icon: Globe2, end: false },

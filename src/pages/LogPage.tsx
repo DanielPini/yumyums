@@ -1,48 +1,16 @@
-import { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Settings2, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
-import type { MealType } from '../types';
 import { addDays, formatDisplayDate, todayStr } from '../utils/date';
-import { addMacros, emptyMacros, logEntryMacros } from '../utils/macros';
-import MacroSummary from '../components/MacroSummary';
-import MacroBadges from '../components/MacroBadges';
 import Modal from '../components/Modal';
-import AddLogEntryForm from '../components/AddLogEntryForm';
-
-const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+import DayPlan from '../components/DayPlan';
 
 export default function LogPage() {
   const [date, setDate] = useState(todayStr());
-  const [addingFor, setAddingFor] = useState<MealType | null>(null);
   const [editingTargets, setEditingTargets] = useState(false);
 
-  const log = useAppStore((s) => s.log);
-  const foods = useAppStore((s) => s.foods);
-  const meals = useAppStore((s) => s.meals);
   const macroTargets = useAppStore((s) => s.macroTargets);
   const setMacroTargets = useAppStore((s) => s.setMacroTargets);
-  const addLogEntry = useAppStore((s) => s.addLogEntry);
-  const removeLogEntry = useAppStore((s) => s.removeLogEntry);
-
-  const foodsById = useMemo(() => new Map(foods.map((f) => [f.id, f])), [foods]);
-  const mealsById = useMemo(() => new Map(meals.map((m) => [m.id, m])), [meals]);
-
-  const entriesForDay = useMemo(() => log.filter((l) => l.date === date), [log, date]);
-
-  const dayTotals = useMemo(
-    () => entriesForDay.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros()),
-    [entriesForDay, foodsById, mealsById]
-  );
-
-  function entryLabel(entry: (typeof entriesForDay)[number]) {
-    if (entry.source.type === 'food') {
-      const food = foodsById.get(entry.source.foodId);
-      const unit = food?.unit === 'piece' ? 'pc' : food?.unit ?? '';
-      return `${food?.name ?? 'Unknown food'} · ${entry.source.quantity}${unit}`;
-    }
-    const meal = mealsById.get(entry.source.mealId);
-    return `${meal?.name ?? 'Unknown meal'} · ${entry.source.servings}× serving`;
-  }
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">
@@ -77,71 +45,7 @@ export default function LogPage() {
         </button>
       </div>
 
-      <MacroSummary totals={dayTotals} targets={macroTargets} />
-
-      <div className="space-y-4">
-        {mealTypes.map((mealType) => {
-          const entries = entriesForDay.filter((e) => e.mealType === mealType);
-          const mealTotals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
-          return (
-            <div key={mealType} className="rounded-lg border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900">
-              <div className="flex items-center justify-between border-b border-stone-100 px-4 py-2.5 dark:border-stone-800">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold">{mealType}</h3>
-                  {entries.length > 0 && <span className="text-xs text-stone-400">{Math.round(mealTotals.calories)} kcal</span>}
-                </div>
-                <button
-                  onClick={() => setAddingFor(mealType)}
-                  className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700"
-                >
-                  <Plus size={14} /> Add
-                </button>
-              </div>
-              {entries.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-stone-400">Nothing logged yet.</p>
-              ) : (
-                <ul className="divide-y divide-stone-100 dark:divide-stone-800">
-                  {entries.map((entry) => (
-                    <li key={entry.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm">{entryLabel(entry)}</p>
-                        <div className="mt-1">
-                          <MacroBadges macros={logEntryMacros(entry, foodsById, mealsById)} />
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => removeLogEntry(entry.id)}
-                        className="shrink-0 rounded p-1 text-stone-300 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
-                        aria-label="Remove entry"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {addingFor && (
-        <Modal title={`Add to ${addingFor}`} onClose={() => setAddingFor(null)}>
-          {foods.length === 0 ? (
-            <p className="text-sm text-stone-500">Add some foods first on the Foods page.</p>
-          ) : (
-            <AddLogEntryForm
-              date={date}
-              defaultMealType={addingFor}
-              onSubmit={(entry) => {
-                addLogEntry(entry);
-                setAddingFor(null);
-              }}
-              onCancel={() => setAddingFor(null)}
-            />
-          )}
-        </Modal>
-      )}
+      <DayPlan date={date} />
 
       {editingTargets && (
         <TargetsModal

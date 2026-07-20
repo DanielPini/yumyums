@@ -6,16 +6,19 @@ export type FoodCategory =
   | 'Fruit'
   | 'Legume'
   | 'Dairy'
+  | 'Eggs'
   | 'Nuts & Seeds'
   | 'Protein'
+  | 'Sweets & Desserts'
   | 'Fat & Oil'
   | 'Spice & Condiment'
   | 'Beverage'
   | 'Other';
 
-export type Unit = 'g' | 'ml' | 'piece';
+/** The unit macros are expressed against: grams or millilitres. */
+export type BaseUnit = 'g' | 'ml';
 
-/** Macro + calorie values, always expressed per 100 units (100g or 100ml), or per piece when unit is 'piece'. */
+/** Macro + calorie values, always expressed per 100 base units (100g or 100ml). */
 export interface Macros {
   calories: number;
   protein: number;
@@ -28,17 +31,26 @@ export interface Food {
   name: string;
   category: FoodCategory;
   dietType: DietType;
-  unit: Unit;
-  /** Macros per 100 units (100g/100ml), or per single piece if unit === 'piece'. */
-  macrosPer: Macros;
+  baseUnit: BaseUnit;
+  /** Macros per 100 base units (100g or 100ml) — every food supports by-weight logging. */
+  macrosPer100: Macros;
+  /** Weight/volume (in baseUnit) of one typical piece, e.g. 1 egg = 50g. Enables by-item logging alongside by-weight. */
+  pieceSize?: number;
+  /** Label for the piece unit, e.g. "1 egg", "1 slice". Defaults to "1 piece" when pieceSize is set. */
+  pieceLabel?: string;
   cuisineIds: string[];
   notes?: string;
   createdAt: number;
 }
 
+/** A quantity of a food, either by weight/volume (in the food's baseUnit) or by piece count. */
+export type FoodAmount =
+  | { mode: 'weight'; quantity: number }
+  | { mode: 'piece'; quantity: number };
+
 export interface MealIngredient {
   foodId: string;
-  quantity: number;
+  amount: FoodAmount;
 }
 
 export interface Meal {
@@ -63,9 +75,9 @@ export interface LogEntry {
   id: string;
   date: string; // yyyy-mm-dd
   mealType: MealType;
-  /** Either a food logged directly (quantity in food's unit) or a meal logged as a number of servings. */
+  /** Either a food logged directly (by weight or by piece) or a meal logged as a number of servings. */
   source:
-    | { type: 'food'; foodId: string; quantity: number }
+    | { type: 'food'; foodId: string; amount: FoodAmount }
     | { type: 'meal'; mealId: string; servings: number };
   createdAt: number;
 }

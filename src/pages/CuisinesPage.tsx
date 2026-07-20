@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type SubmitEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, Search, Star, Trash2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
@@ -45,7 +45,7 @@ export default function CuisinesPage() {
       .sort((a, b) => Number(b.favourite) - Number(a.favourite) || a.name.localeCompare(b.name));
   }, [cuisines, query]);
 
-  function handleAddCuisine(e: React.FormEvent) {
+  function handleAddCuisine(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const name = newName.trim();
     if (!name) return;

@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type SubmitEvent } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import type { LogEntry, MealType } from '../types';
-import { foodMacrosForQuantity, mealMacrosPerServing, scaleMacros } from '../utils/macros';
+import type { FoodAmount, LogEntry, MealType } from '../types';
+import { defaultAmountForFood, foodMacrosForAmount, mealMacrosPerServing, scaleMacros } from '../utils/macros';
 import MacroBadges from './MacroBadges';
+import AmountInput from './AmountInput';
 
 const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
@@ -24,7 +25,7 @@ export default function AddLogEntryForm({
   const [sourceType, setSourceType] = useState<'food' | 'meal'>('food');
   const [mealType, setMealType] = useState<MealType>(defaultMealType);
   const [foodId, setFoodId] = useState(foods[0]?.id ?? '');
-  const [quantity, setQuantity] = useState(100);
+  const [amount, setAmount] = useState<FoodAmount>(defaultAmountForFood());
   const [mealId, setMealId] = useState(meals[0]?.id ?? '');
   const [servings, setServings] = useState(1);
 
@@ -33,15 +34,15 @@ export default function AddLogEntryForm({
 
   const previewMacros =
     sourceType === 'food' && selectedFood
-      ? foodMacrosForQuantity(selectedFood, quantity)
+      ? foodMacrosForAmount(selectedFood, amount)
       : sourceType === 'meal' && selectedMeal
         ? scaleMacros(mealMacrosPerServing(selectedMeal, foodsById), servings)
         : null;
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (sourceType === 'food' && foodId) {
-      onSubmit({ date, mealType, source: { type: 'food', foodId, quantity } });
+      onSubmit({ date, mealType, source: { type: 'food', foodId, amount } });
     } else if (sourceType === 'meal' && mealId) {
       onSubmit({ date, mealType, source: { type: 'meal', mealId, servings } });
     }
@@ -81,10 +82,17 @@ export default function AddLogEntryForm({
       </div>
 
       {sourceType === 'food' ? (
-        <div className="flex gap-3">
+        <div className="flex items-end gap-3">
           <div className="flex-1">
             <label className="mb-1 block text-xs font-medium text-stone-500">Food</label>
-            <select className={inputClass} value={foodId} onChange={(e) => setFoodId(e.target.value)}>
+            <select
+              className={inputClass}
+              value={foodId}
+              onChange={(e) => {
+                setFoodId(e.target.value);
+                setAmount(defaultAmountForFood());
+              }}
+            >
               {foods.map((f) => (
                 <option key={f.id} value={f.id}>
                   {f.name}
@@ -92,18 +100,9 @@ export default function AddLogEntryForm({
               ))}
             </select>
           </div>
-          <div className="w-28">
-            <label className="mb-1 block text-xs font-medium text-stone-500">
-              Qty {selectedFood?.unit === 'piece' ? '(pc)' : `(${selectedFood?.unit ?? 'g'})`}
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="any"
-              className={inputClass}
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value) || 0)}
-            />
+          <div>
+            <label className="mb-1 block text-xs font-medium text-stone-500">Quantity</label>
+            <AmountInput food={selectedFood} amount={amount} onChange={setAmount} />
           </div>
         </div>
       ) : (
