@@ -4,6 +4,28 @@ import { v4 as uuid } from 'uuid';
 import type { Cuisine, Food, LogEntry, MacroTargets, Meal } from '../types';
 import { seedCuisines, seedFoods, seedMeals } from '../data/seedData';
 
+/** Adds any seed items not already present (by id) in the persisted list, so growing the seed data in code reaches existing users without wiping their own edits/additions. */
+function mergeSeedById<T extends { id: string }>(persisted: T[] | undefined, seed: T[]): T[] {
+  const existing = Array.isArray(persisted) ? persisted : [];
+  const existingIds = new Set(existing.map((item) => item.id));
+  return [...existing, ...seed.filter((item) => !existingIds.has(item.id))];
+}
+
+/** Drops any persisted food from an earlier, incompatible schema (pre by-weight/by-piece refactor) instead of letting it crash the UI. */
+function dropLegacyFoods(foods: Food[]): Food[] {
+  return foods.filter((f) => f && typeof f === 'object' && 'baseUnit' in f && 'macrosPer100' in f);
+}
+
+/** Drops any persisted meal referencing the pre-refactor ingredient shape (quantity instead of amount). */
+function dropLegacyMeals(meals: Meal[]): Meal[] {
+  return meals.filter((m) => Array.isArray(m.ingredients) && m.ingredients.every((i) => i && typeof i === 'object' && 'amount' in i));
+}
+
+/** Drops any persisted log entry referencing the pre-refactor food-amount shape (quantity instead of amount). */
+function dropLegacyLogEntries(log: LogEntry[]): LogEntry[] {
+  return log.filter((l) => l.source.type === 'meal' || (l.source.type === 'food' && 'amount' in l.source));
+}
+
 interface AppState {
   foods: Food[];
   meals: Meal[];
@@ -105,6 +127,22 @@ export const useAppStore = create<AppState>()(
 
       setMacroTargets: (targets) => set({ macroTargets: targets }),
     }),
-    { name: 'yumyums-store' }
+    {
+      name: 'yumyums-store',
+      merge: (persistedState, currentState) => {
+        const persisted = (persistedState ?? {}) as Partial<AppState>;
+        const safeFoods = dropLegacyFoods(persisted.foods ?? []);
+        const safeMeals = dropLegacyMeals(persisted.meals ?? []);
+        const safeLog = dropLegacyLogEntries(persisted.log ?? []);
+        return {
+          ...currentState,
+          ...persisted,
+          foods: mergeSeedById(safeFoods, seedFoods),
+          meals: mergeSeedById(safeMeals, seedMeals),
+          cuisines: mergeSeedById(persisted.cuisines, seedCuisines),
+          log: safeLog,
+        };
+      },
+    }
   )
 );
