@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand-50: #f1f9ee;
+  --color-brand-100: #dcefd4;
+  --color-brand-200: #bce0ab;
+  --color-brand-300: #92cc79;
+  --color-brand-400: #6bb552;
+  --color-brand-500: #4c9a37;
+  --color-brand-600: #3a7c29;
+  --color-brand-700: #2f6222;
+  --color-brand-800: #294f1f;
+  --color-brand-900: #23421d;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  @apply bg-stone-50 text-stone-900;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    @apply bg-stone-950 text-stone-100;
+  }
+}
+
+* {
+  scrollbar-width: thin;
+}
