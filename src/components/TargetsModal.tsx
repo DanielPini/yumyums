@@ -1,73 +1,14 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
-import { useAppStore } from '../store/useAppStore';
-import { addDays, formatDisplayDate, todayStr } from '../utils/date';
-import Modal from '../components/Modal';
-import DayPlan from '../components/DayPlan';
+import type { MacroTargets } from '../types';
+import Modal from './Modal';
 
-export default function LogPage() {
-  const [date, setDate] = useState(todayStr());
-  const [editingTargets, setEditingTargets] = useState(false);
-
-  const macroTargets = useAppStore((s) => s.macroTargets);
-  const setMacroTargets = useAppStore((s) => s.setMacroTargets);
-
-  return (
-    <div className="mx-auto max-w-3xl space-y-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setDate((d) => addDays(d, -1))}
-            className="rounded-md p-1.5 text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
-            aria-label="Previous day"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <h1 className="w-36 text-center text-lg font-semibold">{formatDisplayDate(date)}</h1>
-          <button
-            onClick={() => setDate((d) => addDays(d, 1))}
-            className="rounded-md p-1.5 text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
-            aria-label="Next day"
-          >
-            <ChevronRight size={18} />
-          </button>
-          {date !== todayStr() && (
-            <button onClick={() => setDate(todayStr())} className="ml-1 text-xs font-medium text-brand-600 hover:text-brand-700">
-              Today
-            </button>
-          )}
-        </div>
-        <button
-          onClick={() => setEditingTargets(true)}
-          className="flex items-center gap-1.5 rounded-md border border-stone-200 px-2.5 py-1.5 text-sm text-stone-500 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
-        >
-          <Settings2 size={15} /> Goals
-        </button>
-      </div>
-
-      <DayPlan date={date} />
-
-      {editingTargets && (
-        <TargetsModal
-          initial={macroTargets}
-          onSave={(t) => {
-            setMacroTargets(t);
-            setEditingTargets(false);
-          }}
-          onClose={() => setEditingTargets(false)}
-        />
-      )}
-    </div>
-  );
-}
-
-function TargetsModal({
+export default function TargetsModal({
   initial,
   onSave,
   onClose,
 }: {
-  initial: { calories: number; protein: number; carbs: number; fat: number };
-  onSave: (t: { calories: number; protein: number; carbs: number; fat: number }) => void;
+  initial: MacroTargets;
+  onSave: (t: MacroTargets) => void;
   onClose: () => void;
 }) {
   const [calories, setCalories] = useState(String(initial.calories));

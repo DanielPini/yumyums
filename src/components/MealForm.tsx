@@ -20,6 +20,7 @@ export default function MealForm({
   const foods = useAppStore((s) => s.foods);
   const cuisines = useAppStore((s) => s.cuisines);
   const foodsById = useMemo(() => new Map(foods.map((f) => [f.id, f])), [foods]);
+  const sortedFoods = useMemo(() => [...foods].sort((a, b) => a.name.localeCompare(b.name)), [foods]);
 
   const [name, setName] = useState(initial?.name ?? '');
   const [cuisineId, setCuisineId] = useState<string | null>(initial?.cuisineId ?? null);
@@ -27,6 +28,7 @@ export default function MealForm({
   const [ingredients, setIngredients] = useState<MealIngredient[]>(
     initial?.ingredients ?? (foods[0] ? [{ foodId: foods[0].id, amount: defaultAmountForFood() }] : [])
   );
+  const [recipeSteps, setRecipeSteps] = useState<string[]>(initial?.recipeSteps ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? '');
 
   const previewMeal = useMemo<Meal>(
@@ -59,14 +61,28 @@ export default function MealForm({
     setIngredients((prev) => [...prev, { foodId: foods[0].id, amount: defaultAmountForFood() }]);
   }
 
+  function updateStep(index: number, value: string) {
+    setRecipeSteps((prev) => prev.map((s, i) => (i === index ? value : s)));
+  }
+
+  function removeStep(index: number) {
+    setRecipeSteps((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function addStep() {
+    setRecipeSteps((prev) => [...prev, '']);
+  }
+
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim() || ingredients.length === 0) return;
+    const cleanedSteps = recipeSteps.map((s) => s.trim()).filter(Boolean);
     onSubmit({
       name: name.trim(),
       cuisineId,
       favourite,
       ingredients,
+      recipeSteps: cleanedSteps.length > 0 ? cleanedSteps : undefined,
       notes: notes.trim() || undefined,
     });
   }
@@ -122,7 +138,7 @@ export default function MealForm({
                   value={ing.foodId}
                   onChange={(e) => updateIngredient(i, { foodId: e.target.value, amount: defaultAmountForFood() })}
                 >
-                  {foods.map((f) => (
+                  {sortedFoods.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.name}
                     </option>
@@ -147,6 +163,38 @@ export default function MealForm({
       <div className="rounded-md bg-stone-50 p-3 dark:bg-stone-800/50">
         <p className="mb-1.5 text-xs font-medium text-stone-500">Macros per serving</p>
         <MacroBadges macros={macrosPerServing} />
+      </div>
+
+      <div>
+        <div className="mb-1 flex items-center justify-between">
+          <label className="block text-xs font-medium text-stone-500">Recipe steps</label>
+          <button type="button" onClick={addStep} className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
+            <Plus size={13} /> Add step
+          </button>
+        </div>
+        <div className="space-y-2">
+          {recipeSteps.map((step, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <span className="mt-2 w-5 shrink-0 text-right text-xs text-stone-400">{i + 1}.</span>
+              <textarea
+                className={`${inputClass} flex-1`}
+                rows={2}
+                value={step}
+                onChange={(e) => updateStep(i, e.target.value)}
+                placeholder={`Step ${i + 1}`}
+              />
+              <button
+                type="button"
+                onClick={() => removeStep(i)}
+                className="mt-1.5 rounded p-1.5 text-stone-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
+                aria-label="Remove step"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))}
+          {recipeSteps.length === 0 && <p className="text-xs text-stone-400">No recipe steps yet.</p>}
+        </div>
       </div>
 
       <div>

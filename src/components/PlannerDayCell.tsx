@@ -67,8 +67,10 @@ export default function PlannerDayCell({
       {hasEntries && (
         <div className="mt-1 border-t border-stone-100 pt-1 dark:border-stone-800">
           <p className="text-xs font-semibold text-stone-700 dark:text-stone-200">{m.calories} kcal</p>
-          <p className="text-[10px] text-stone-400">
-            P{m.protein} · C{m.carbs} · F{m.fat}
+          <p className="text-[10px] font-medium">
+            <span className="text-blue-600 dark:text-blue-400">P{m.protein}</span>{' '}
+            <span className="text-amber-600 dark:text-amber-400">C{m.carbs}</span>{' '}
+            <span className="text-rose-600 dark:text-rose-400">F{m.fat}</span>
           </p>
         </div>
       )}

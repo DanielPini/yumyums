@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { getMonthGrid, monthLabel, WEEKDAY_LABELS } from '../utils/calendar';
 import { formatDisplayDate, todayStr } from '../utils/date';
@@ -9,6 +9,7 @@ import PlannerDayCell from '../components/PlannerDayCell';
 import Modal from '../components/Modal';
 import AddLogEntryForm from '../components/AddLogEntryForm';
 import DayPlan from '../components/DayPlan';
+import TargetsModal from '../components/TargetsModal';
 
 export default function PlannerPage() {
   const today = todayStr();
@@ -16,11 +17,14 @@ export default function PlannerPage() {
   const [month, setMonth] = useState(() => Number(today.slice(5, 7)) - 1);
   const [quickAddDate, setQuickAddDate] = useState<string | null>(null);
   const [detailDate, setDetailDate] = useState<string | null>(null);
+  const [editingTargets, setEditingTargets] = useState(false);
 
   const log = useAppStore((s) => s.log);
   const foods = useAppStore((s) => s.foods);
   const meals = useAppStore((s) => s.meals);
   const addLogEntry = useAppStore((s) => s.addLogEntry);
+  const macroTargets = useAppStore((s) => s.macroTargets);
+  const setMacroTargets = useAppStore((s) => s.setMacroTargets);
 
   const foodsById = useMemo(() => new Map(foods.map((f) => [f.id, f])), [foods]);
   const mealsById = useMemo(() => new Map(meals.map((m) => [m.id, m])), [meals]);
@@ -87,7 +91,15 @@ export default function PlannerPage() {
             </button>
           )}
         </div>
-        <p className="hidden text-xs text-stone-400 sm:block">Click a day to view/edit · use + to quick-add</p>
+        <div className="flex items-center gap-3">
+          <p className="hidden text-xs text-stone-400 sm:block">Click a day to view/edit · use + to quick-add</p>
+          <button
+            onClick={() => setEditingTargets(true)}
+            className="flex items-center gap-1.5 rounded-md border border-stone-200 px-2.5 py-1.5 text-sm text-stone-500 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+          >
+            <Settings2 size={15} /> Goals
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-stone-400 sm:gap-2">
@@ -118,19 +130,15 @@ export default function PlannerPage() {
 
       {quickAddDate && (
         <Modal title={`Add to ${formatDisplayDate(quickAddDate)}`} onClose={() => setQuickAddDate(null)}>
-          {foods.length === 0 ? (
-            <p className="text-sm text-stone-500">Add some foods first on the Foods page.</p>
-          ) : (
-            <AddLogEntryForm
-              date={quickAddDate}
-              defaultMealType="Snack"
-              onSubmit={(entry) => {
-                addLogEntry(entry);
-                setQuickAddDate(null);
-              }}
-              onCancel={() => setQuickAddDate(null)}
-            />
-          )}
+          <AddLogEntryForm
+            date={quickAddDate}
+            defaultMealType="Snack"
+            onSubmit={(entry) => {
+              addLogEntry(entry);
+              setQuickAddDate(null);
+            }}
+            onCancel={() => setQuickAddDate(null)}
+          />
         </Modal>
       )}
 
@@ -138,6 +146,17 @@ export default function PlannerPage() {
         <Modal title={formatDisplayDate(detailDate)} onClose={() => setDetailDate(null)}>
           <DayPlan date={detailDate} />
         </Modal>
+      )}
+
+      {editingTargets && (
+        <TargetsModal
+          initial={macroTargets}
+          onSave={(t) => {
+            setMacroTargets(t);
+            setEditingTargets(false);
+          }}
+          onClose={() => setEditingTargets(false)}
+        />
       )}
     </div>
   );

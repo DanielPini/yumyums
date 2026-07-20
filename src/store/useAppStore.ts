@@ -33,7 +33,7 @@ interface AppState {
   log: LogEntry[];
   macroTargets: MacroTargets;
 
-  addFood: (food: Omit<Food, 'id' | 'createdAt'>) => void;
+  addFood: (food: Omit<Food, 'id' | 'createdAt'>) => string;
   updateFood: (id: string, food: Omit<Food, 'id' | 'createdAt'>) => void;
   deleteFood: (id: string) => void;
 
@@ -61,10 +61,13 @@ export const useAppStore = create<AppState>()(
       log: [],
       macroTargets: { calories: 2000, protein: 100, carbs: 250, fat: 65 },
 
-      addFood: (food) =>
+      addFood: (food) => {
+        const id = uuid();
         set((state) => ({
-          foods: [...state.foods, { ...food, id: uuid(), createdAt: Date.now() }],
-        })),
+          foods: [...state.foods, { ...food, id, createdAt: Date.now() }],
+        }));
+        return id;
+      },
       updateFood: (id, food) =>
         set((state) => ({
           foods: state.foods.map((f) => (f.id === id ? { ...f, ...food } : f)),

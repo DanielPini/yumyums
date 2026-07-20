@@ -60,6 +60,8 @@ export interface Meal {
   favourite: boolean;
   ingredients: MealIngredient[];
   notes?: string;
+  /** Step-by-step cooking instructions. */
+  recipeSteps?: string[];
   createdAt: number;
 }
 

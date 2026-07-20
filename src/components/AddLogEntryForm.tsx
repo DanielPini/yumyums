@@ -1,9 +1,12 @@
-import { useMemo, useState, type SubmitEvent } from 'react';
+import { Fragment, useMemo, useState, type SubmitEvent } from 'react';
+import { Plus } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { FoodAmount, LogEntry, MealType } from '../types';
 import { defaultAmountForFood, foodMacrosForAmount, mealMacrosPerServing, scaleMacros } from '../utils/macros';
 import MacroBadges from './MacroBadges';
 import AmountInput from './AmountInput';
+import Modal from './Modal';
+import FoodForm, { type FoodFormValues } from './FoodForm';
 
 const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
@@ -20,14 +23,18 @@ export default function AddLogEntryForm({
 }) {
   const foods = useAppStore((s) => s.foods);
   const meals = useAppStore((s) => s.meals);
+  const addFood = useAppStore((s) => s.addFood);
   const foodsById = useMemo(() => new Map(foods.map((f) => [f.id, f])), [foods]);
+  const sortedFoods = useMemo(() => [...foods].sort((a, b) => a.name.localeCompare(b.name)), [foods]);
+  const sortedMeals = useMemo(() => [...meals].sort((a, b) => a.name.localeCompare(b.name)), [meals]);
 
   const [sourceType, setSourceType] = useState<'food' | 'meal'>('food');
   const [mealType, setMealType] = useState<MealType>(defaultMealType);
-  const [foodId, setFoodId] = useState(foods[0]?.id ?? '');
+  const [foodId, setFoodId] = useState(sortedFoods[0]?.id ?? '');
   const [amount, setAmount] = useState<FoodAmount>(defaultAmountForFood());
-  const [mealId, setMealId] = useState(meals[0]?.id ?? '');
+  const [mealId, setMealId] = useState(sortedMeals[0]?.id ?? '');
   const [servings, setServings] = useState(1);
+  const [showAddFood, setShowAddFood] = useState(false);
 
   const selectedFood = foodsById.get(foodId);
   const selectedMeal = meals.find((m) => m.id === mealId);
@@ -48,11 +55,19 @@ export default function AddLogEntryForm({
     }
   }
 
+  function handleAddFood(values: FoodFormValues) {
+    const newId = addFood(values);
+    setFoodId(newId);
+    setAmount(defaultAmountForFood());
+    setShowAddFood(false);
+  }
+
   const inputClass =
     'w-full rounded-md border border-stone-200 bg-white px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-950';
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <Fragment>
+      <form onSubmit={handleSubmit} className="space-y-4">
       <div className="flex gap-2">
         {(['food', 'meal'] as const).map((t) => (
           <button
@@ -82,35 +97,44 @@ export default function AddLogEntryForm({
       </div>
 
       {sourceType === 'food' ? (
-        <div className="flex items-end gap-3">
-          <div className="flex-1">
-            <label className="mb-1 block text-xs font-medium text-stone-500">Food</label>
-            <select
-              className={inputClass}
-              value={foodId}
-              onChange={(e) => {
-                setFoodId(e.target.value);
-                setAmount(defaultAmountForFood());
-              }}
-            >
-              {foods.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name}
-                </option>
-              ))}
-            </select>
+        <div className="space-y-2">
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-stone-500">Food</label>
+              <select
+                className={inputClass}
+                value={foodId}
+                onChange={(e) => {
+                  setFoodId(e.target.value);
+                  setAmount(defaultAmountForFood());
+                }}
+              >
+                {sortedFoods.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-stone-500">Quantity</label>
+              <AmountInput food={selectedFood} amount={amount} onChange={setAmount} />
+            </div>
           </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-stone-500">Quantity</label>
-            <AmountInput food={selectedFood} amount={amount} onChange={setAmount} />
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddFood(true)}
+            className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700"
+          >
+            <Plus size={13} /> Can't find it? Add a new food
+          </button>
         </div>
       ) : (
         <div className="flex gap-3">
           <div className="flex-1">
             <label className="mb-1 block text-xs font-medium text-stone-500">Meal</label>
             <select className={inputClass} value={mealId} onChange={(e) => setMealId(e.target.value)}>
-              {meals.map((m) => (
+              {sortedMeals.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}
                 </option>
@@ -149,6 +173,13 @@ export default function AddLogEntryForm({
           Log it
         </button>
       </div>
-    </form>
+      </form>
+
+      {showAddFood && (
+        <Modal title="Add food" onClose={() => setShowAddFood(false)}>
+          <FoodForm onSubmit={handleAddFood} onCancel={() => setShowAddFood(false)} />
+        </Modal>
+      )}
+    </Fragment>
   );
 }

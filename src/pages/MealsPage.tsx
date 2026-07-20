@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Plus, Search, Pencil, Trash2, Star } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, Star, BookOpen } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { Meal } from '../types';
 import Modal from '../components/Modal';
 import MealForm, { type MealFormValues } from '../components/MealForm';
 import MacroBadges from '../components/MacroBadges';
+import RecipeModal from '../components/RecipeModal';
 import { mealMacrosPerServing } from '../utils/macros';
 
 export default function MealsPage() {
@@ -16,6 +17,7 @@ export default function MealsPage() {
   const [editing, setEditing] = useState<Meal | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Meal | null>(null);
+  const [recipeTarget, setRecipeTarget] = useState<Meal | null>(null);
 
   const meals = useAppStore((s) => s.meals);
   const foods = useAppStore((s) => s.foods);
@@ -121,6 +123,14 @@ export default function MealsPage() {
                 >
                   <Star size={16} fill={meal.favourite ? 'currentColor' : 'none'} />
                 </button>
+                <button
+                  onClick={() => setRecipeTarget(meal)}
+                  className="rounded p-1 text-stone-400 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/40"
+                  aria-label={`View recipe for ${meal.name}`}
+                  title="View recipe"
+                >
+                  <BookOpen size={16} />
+                </button>
                 <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                   <button
                     onClick={() => setEditing(meal)}
@@ -180,6 +190,9 @@ export default function MealsPage() {
             </button>
           </div>
         </Modal>
+      )}
+      {recipeTarget && (
+        <RecipeModal meal={recipeTarget} foodsById={foodsById} onClose={() => setRecipeTarget(null)} />
       )}
     </div>
   );

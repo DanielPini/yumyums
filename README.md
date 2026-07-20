@@ -6,14 +6,13 @@ Built with React + TypeScript + Vite, Tailwind CSS, Zustand (state, persisted to
 
 ## Features
 
+- **Planner** — a monthly calendar, and now the app's home screen. Each day cell has a "+" to quickly add planned foods/meals (with an inline "add a new food" flow if it isn't in your pantry yet), and shows a colour-coded macro total (calories + P/C/F) at the bottom of the cell. Clicking a day opens the full day view — a calorie ring, protein/carb/fat progress bars against your daily goals, and Breakfast/Lunch/Dinner/Snack sections to add or remove entries. Daily goals are editable via "Goals" in the header.
 - **Foods** — a searchable, filterable pantry of foods with category (including Eggs and Sweets & Desserts), diet type (vegan/vegetarian/eggetarian), and macros per 100g/100ml. Any food can also define a typical item size (e.g. "1 egg" ≈ 50g), so quantities can be entered by weight *or* by item everywhere in the app.
-- **Meals** — build meals from foods + quantities (mixing by-weight and by-item ingredients freely), tag them with a cuisine, mark favourites, see computed macros per serving.
-- **Cuisines** — organise foods/meals by cuisine and star your favourites.
-- **Today (log)** — log foods or meals against Breakfast/Lunch/Dinner/Snack for any day, with a calorie ring and protein/carb/fat progress bars against your daily goals (editable via "Goals").
-- **Planner** — a monthly calendar for forward meal planning. Each day has a "+" to quickly add planned foods/meals, and shows a running macro total at the bottom of the cell; clicking a day opens the full day view (same as Today) to review or edit what's planned.
+- **Meals** — build meals from foods + quantities (mixing by-weight and by-item ingredients freely), tag them with a cuisine, mark favourites, see computed macros per serving, and write/view a step-by-step recipe for each one (via the book icon on each meal card).
+- **Cuisines** — organise foods/meals by cuisine and star your favourites, including Indian, Italian, Mexican, Mediterranean, East Asian, American and Vietnamese.
 - **Global search** — the header search box finds matches across foods, meals and cuisines.
 
-Comes pre-seeded with ~95 foods, 8 meals and 6 cuisines across Indian, Italian, Mexican, Mediterranean, East Asian and American cooking, with nutrition figures sourced from USDA-based data, so there's something to explore immediately — edit or delete freely.
+Comes pre-seeded with 134 foods, 20 meals (with full recipes — Indian dals and curries, Mexican mole/burritos/quesadillas/enchiladas, Vietnamese pho/bún/bánh mì/gỏi cuốn/bánh xèo, plus the original Italian/Mediterranean/American set) and 7 cuisines, with nutrition figures sourced from USDA-based data, so there's something to explore immediately — edit or delete freely.
 
 ## Getting started
 

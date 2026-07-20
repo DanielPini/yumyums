@@ -84,19 +84,15 @@ export default function DayPlan({ date, showSummary = true }: { date: string; sh
 
       {addingFor && (
         <Modal title={`Add to ${addingFor}`} onClose={() => setAddingFor(null)}>
-          {foods.length === 0 ? (
-            <p className="text-sm text-stone-500">Add some foods first on the Foods page.</p>
-          ) : (
-            <AddLogEntryForm
-              date={date}
-              defaultMealType={addingFor}
-              onSubmit={(entry) => {
-                addLogEntry(entry);
-                setAddingFor(null);
-              }}
-              onCancel={() => setAddingFor(null)}
-            />
-          )}
+          <AddLogEntryForm
+            date={date}
+            defaultMealType={addingFor}
+            onSubmit={(entry) => {
+              addLogEntry(entry);
+              setAddingFor(null);
+            }}
+            onCancel={() => setAddingFor(null)}
+          />
         </Modal>
       )}
     </div>
