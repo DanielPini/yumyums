@@ -59,17 +59,17 @@ export default function CuisinesPage() {
     <div className="mx-auto max-w-3xl space-y-5">
       <div>
         <h1 className="text-xl font-semibold">Cuisines</h1>
-        <p className="text-sm text-stone-500">Organise foods and meals by cuisine, and star your favourites</p>
+        <p className="text-sm text-muted">Organise foods and meals by cuisine, and star your favourites</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400" />
+          <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-subtle" />
           <input
             value={query}
             onChange={(e) => setSearchParams(e.target.value ? { q: e.target.value } : {})}
             placeholder="Search cuisines…"
-            className="w-full rounded-md border border-stone-200 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-900"
+            className="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
           />
         </div>
         <form onSubmit={handleAddCuisine} className="flex gap-2">
@@ -77,7 +77,7 @@ export default function CuisinesPage() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="New cuisine name"
-            className="rounded-md border border-stone-200 bg-white px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-900"
+            className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
           />
           <button type="submit" className="flex items-center gap-1.5 rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700">
             <Plus size={16} /> Add
@@ -89,14 +89,14 @@ export default function CuisinesPage() {
         {filtered.map((cuisine) => (
           <div
             key={cuisine.id}
-            className="group flex items-center justify-between gap-3 rounded-lg border border-stone-200 bg-white p-3.5 dark:border-stone-800 dark:bg-stone-900"
+            className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3.5"
           >
             <button
               className="min-w-0 flex-1 text-left"
               onClick={() => navigate(`/meals?q=${encodeURIComponent('')}&cuisine=${cuisine.id}`)}
             >
               <p className="truncate font-medium">{cuisine.name}</p>
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-muted">
                 {pluralize(mealCounts.get(cuisine.id) ?? 0, 'meal')} · {pluralize(foodCounts.get(cuisine.id) ?? 0, 'food')}
               </p>
             </button>
@@ -110,7 +110,7 @@ export default function CuisinesPage() {
               </button>
               <button
                 onClick={() => setDeleteTargetId(cuisine.id)}
-                className="rounded p-1 text-stone-400 opacity-0 hover:bg-rose-50 hover:text-rose-600 group-hover:opacity-100 dark:hover:bg-rose-950"
+                className="rounded p-1 text-subtle opacity-0 hover:bg-rose-50 hover:text-rose-600 group-hover:opacity-100 dark:hover:bg-rose-950"
                 aria-label={`Delete ${cuisine.name}`}
               >
                 <Trash2 size={14} />
@@ -119,7 +119,7 @@ export default function CuisinesPage() {
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="col-span-2 py-10 text-center text-sm text-stone-400">No cuisines match your search.</p>
+          <p className="col-span-2 py-10 text-center text-sm text-subtle">No cuisines match your search.</p>
         )}
       </div>
 
@@ -129,7 +129,7 @@ export default function CuisinesPage() {
             Delete <strong>{deleteTarget.name}</strong>? Foods and meals tagged with it will just lose the tag.
           </p>
           <div className="mt-4 flex justify-end gap-2">
-            <button onClick={() => setDeleteTargetId(null)} className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800">
+            <button onClick={() => setDeleteTargetId(null)} className="rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:bg-stone-100 dark:hover:bg-stone-800">
               Cancel
             </button>
             <button

@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { CalendarRange, Salad, UtensilsCrossed, Globe2, Leaf } from 'lucide-react';
+import { CalendarRange, Salad, UtensilsCrossed, Globe2, Leaf, Palette } from 'lucide-react';
 import SearchBar from './SearchBar';
+import AppearanceSettings from './AppearanceSettings';
 
 const navItems = [
   { to: '/', label: 'Planner', icon: CalendarRange, end: true },
@@ -11,9 +12,11 @@ const navItems = [
 ];
 
 export default function Layout({ children }: { children: ReactNode }) {
+  const [showAppearance, setShowAppearance] = useState(false);
+
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="flex shrink-0 flex-col border-b border-stone-200 bg-white md:w-56 md:border-b-0 md:border-r dark:border-stone-800 dark:bg-stone-900">
+      <aside className="flex shrink-0 flex-col border-b border-border bg-surface md:w-56 md:border-b-0 md:border-r">
         <div className="flex items-center gap-2 px-4 py-4">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white">
             <Leaf size={18} />
@@ -39,14 +42,34 @@ export default function Layout({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
+        <div className="mt-auto hidden px-2 pb-4 md:block">
+          <button
+            type="button"
+            onClick={() => setShowAppearance(true)}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
+          >
+            <Palette size={17} />
+            Appearance
+          </button>
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex items-center gap-4 border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur md:px-6 dark:border-stone-800 dark:bg-stone-950/90">
+        <header className="sticky top-0 z-10 flex items-center gap-4 border-b border-border bg-surface/90 px-4 py-3 backdrop-blur md:px-6">
           <SearchBar />
+          <button
+            type="button"
+            onClick={() => setShowAppearance(true)}
+            className="shrink-0 rounded-md p-2 text-subtle hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 md:hidden"
+            aria-label="Appearance settings"
+          >
+            <Palette size={18} />
+          </button>
         </header>
         <main className="flex-1 px-4 py-6 md:px-6">{children}</main>
       </div>
+
+      {showAppearance && <AppearanceSettings onClose={() => setShowAppearance(false)} />}
     </div>
   );
 }

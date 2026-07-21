@@ -88,18 +88,18 @@ export default function MealForm({
   }
 
   const inputClass =
-    'w-full rounded-md border border-stone-200 bg-white px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-950';
+    'w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-xs font-medium text-stone-500">Meal name</label>
+        <label className="mb-1 block text-xs font-medium text-muted">Meal name</label>
         <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-medium text-stone-500">Cuisine</label>
+          <label className="mb-1 block text-xs font-medium text-muted">Cuisine</label>
           <select
             className={inputClass}
             value={cuisineId ?? ''}
@@ -123,7 +123,7 @@ export default function MealForm({
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="block text-xs font-medium text-stone-500">Ingredients</label>
+          <label className="block text-xs font-medium text-muted">Ingredients</label>
           <button type="button" onClick={addIngredient} className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
             <Plus size={13} /> Add ingredient
           </button>
@@ -148,7 +148,7 @@ export default function MealForm({
                 <button
                   type="button"
                   onClick={() => removeIngredient(i)}
-                  className="rounded p-1.5 text-stone-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
+                  className="rounded p-1.5 text-subtle hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
                   aria-label="Remove ingredient"
                 >
                   <Trash2 size={14} />
@@ -156,18 +156,18 @@ export default function MealForm({
               </div>
             );
           })}
-          {ingredients.length === 0 && <p className="text-xs text-stone-400">No ingredients yet.</p>}
+          {ingredients.length === 0 && <p className="text-xs text-subtle">No ingredients yet.</p>}
         </div>
       </div>
 
-      <div className="rounded-md bg-stone-50 p-3 dark:bg-stone-800/50">
-        <p className="mb-1.5 text-xs font-medium text-stone-500">Macros per serving</p>
+      <div className="rounded-md bg-surface-muted p-3">
+        <p className="mb-1.5 text-xs font-medium text-muted">Macros per serving</p>
         <MacroBadges macros={macrosPerServing} />
       </div>
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="block text-xs font-medium text-stone-500">Recipe steps</label>
+          <label className="block text-xs font-medium text-muted">Recipe steps</label>
           <button type="button" onClick={addStep} className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700">
             <Plus size={13} /> Add step
           </button>
@@ -175,7 +175,7 @@ export default function MealForm({
         <div className="space-y-2">
           {recipeSteps.map((step, i) => (
             <div key={i} className="flex items-start gap-2">
-              <span className="mt-2 w-5 shrink-0 text-right text-xs text-stone-400">{i + 1}.</span>
+              <span className="mt-2 w-5 shrink-0 text-right text-xs text-subtle">{i + 1}.</span>
               <textarea
                 className={`${inputClass} flex-1`}
                 rows={2}
@@ -186,24 +186,24 @@ export default function MealForm({
               <button
                 type="button"
                 onClick={() => removeStep(i)}
-                className="mt-1.5 rounded p-1.5 text-stone-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
+                className="mt-1.5 rounded p-1.5 text-subtle hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
                 aria-label="Remove step"
               >
                 <Trash2 size={14} />
               </button>
             </div>
           ))}
-          {recipeSteps.length === 0 && <p className="text-xs text-stone-400">No recipe steps yet.</p>}
+          {recipeSteps.length === 0 && <p className="text-xs text-subtle">No recipe steps yet.</p>}
         </div>
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-stone-500">Notes (optional)</label>
+        <label className="mb-1 block text-xs font-medium text-muted">Notes (optional)</label>
         <textarea className={inputClass} rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <button type="button" onClick={onCancel} className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800">
+        <button type="button" onClick={onCancel} className="rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:bg-stone-100 dark:hover:bg-stone-800">
           Cancel
         </button>
         <button type="submit" className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700">

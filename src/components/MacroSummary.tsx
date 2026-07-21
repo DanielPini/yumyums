@@ -9,13 +9,13 @@ function ProgressBar({ label, value, target, unit, colorClass }: { label: string
     <div>
       <div className="mb-1 flex items-baseline justify-between text-xs">
         <span className="font-medium text-stone-600 dark:text-stone-300">{label}</span>
-        <span className="text-stone-400">
+        <span className="text-subtle">
           {Math.round(value * 10) / 10}
           {unit} / {target}
           {unit}
         </span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
         <div className={`h-full rounded-full ${colorClass}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -33,7 +33,7 @@ export default function MacroSummary({ totals, targets }: { totals: Macros; targ
         ];
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
+    <div className="rounded-xl border border-border bg-surface p-4">
       <div className="flex items-center gap-5">
         <div className="relative h-28 w-28 shrink-0">
           <ResponsiveContainer width="100%" height="100%">
@@ -47,7 +47,7 @@ export default function MacroSummary({ totals, targets }: { totals: Macros; targ
           </ResponsiveContainer>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-lg font-semibold leading-none">{Math.round(totals.calories)}</span>
-            <span className="text-[10px] text-stone-400">of {targets.calories} kcal</span>
+            <span className="text-[10px] text-subtle">of {targets.calories} kcal</span>
           </div>
         </div>
         <div className="flex-1 space-y-2.5">

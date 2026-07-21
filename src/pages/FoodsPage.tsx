@@ -57,7 +57,7 @@ export default function FoodsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">Foods</h1>
-          <p className="text-sm text-stone-500">{foods.length} foods in your pantry</p>
+          <p className="text-sm text-muted">{foods.length} foods in your pantry</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
@@ -69,18 +69,18 @@ export default function FoodsPage() {
 
       <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400" />
+          <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-subtle" />
           <input
             value={query}
             onChange={(e) => setSearchParams(e.target.value ? { q: e.target.value } : {})}
             placeholder="Search foods…"
-            className="w-full rounded-md border border-stone-200 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-900"
+            className="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
           />
         </div>
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as FoodCategory | 'All')}
-          className="rounded-md border border-stone-200 bg-white px-2.5 py-1.5 text-sm dark:border-stone-700 dark:bg-stone-900"
+          className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-sm"
         >
           <option value="All">All categories</option>
           {categories.map((c) => (
@@ -95,12 +95,12 @@ export default function FoodsPage() {
         {filtered.map((food) => (
           <div
             key={food.id}
-            className="group rounded-lg border border-stone-200 bg-white p-3.5 dark:border-stone-800 dark:bg-stone-900"
+            className="group rounded-lg border border-border bg-surface p-3.5"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className="truncate font-medium">{food.name}</p>
-                <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-stone-500">
+                <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted">
                   <span>{food.category}</span>
                   <span className={`rounded px-1.5 py-0.5 font-medium ${dietColors[food.dietType]}`}>
                     {food.dietType}
@@ -117,14 +117,14 @@ export default function FoodsPage() {
               <div className="flex shrink-0 gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
                   onClick={() => setEditing(food)}
-                  className="rounded p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800"
+                  className="rounded p-1 text-subtle hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800"
                   aria-label={`Edit ${food.name}`}
                 >
                   <Pencil size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget(food)}
-                  className="rounded p-1 text-stone-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
+                  className="rounded p-1 text-subtle hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
                   aria-label={`Delete ${food.name}`}
                 >
                   <Trash2 size={14} />
@@ -136,7 +136,7 @@ export default function FoodsPage() {
               {food.cuisineIds.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {food.cuisineIds.map((id) => (
-                    <span key={id} className="rounded-full bg-stone-100 px-2 py-0.5 text-[11px] text-stone-500 dark:bg-stone-800">
+                    <span key={id} className="rounded-full bg-surface-muted px-2 py-0.5 text-[11px] text-muted">
                       {cuisineById.get(id)?.name ?? 'Unknown'}
                     </span>
                   ))}
@@ -146,7 +146,7 @@ export default function FoodsPage() {
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="col-span-2 py-10 text-center text-sm text-stone-400">No foods match your search.</p>
+          <p className="col-span-2 py-10 text-center text-sm text-subtle">No foods match your search.</p>
         )}
       </div>
 
@@ -168,7 +168,7 @@ export default function FoodsPage() {
           <div className="mt-4 flex justify-end gap-2">
             <button
               onClick={() => setDeleteTarget(null)}
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+              className="rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
             >
               Cancel
             </button>

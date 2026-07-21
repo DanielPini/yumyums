@@ -73,7 +73,7 @@ export default function PlannerPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={goToPrevMonth}
-            className="rounded-md p-1.5 text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+            className="rounded-md p-1.5 text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
             aria-label="Previous month"
           >
             <ChevronLeft size={18} />
@@ -81,7 +81,7 @@ export default function PlannerPage() {
           <h1 className="w-44 text-center text-lg font-semibold">{monthLabel(year, month)}</h1>
           <button
             onClick={goToNextMonth}
-            className="rounded-md p-1.5 text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+            className="rounded-md p-1.5 text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
             aria-label="Next month"
           >
             <ChevronRight size={18} />
@@ -93,17 +93,17 @@ export default function PlannerPage() {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <p className="hidden text-xs text-stone-400 sm:block">Click a day to view/edit · use + to quick-add</p>
+          <p className="hidden text-xs text-subtle sm:block">Click a day to view/edit · use + to quick-add</p>
           <button
             onClick={() => setEditingTargets(true)}
-            className="flex items-center gap-1.5 rounded-md border border-stone-200 px-2.5 py-1.5 text-sm text-stone-500 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+            className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
           >
             <Settings2 size={15} /> Goals
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-stone-400 sm:gap-2">
+      <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-subtle sm:gap-2">
         {WEEKDAY_LABELS.map((d) => (
           <div key={d}>{d}</div>
         ))}

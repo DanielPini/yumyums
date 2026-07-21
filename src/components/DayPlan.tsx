@@ -41,11 +41,11 @@ export default function DayPlan({ date, showSummary = true }: { date: string; sh
           const entries = entriesForDay.filter((e) => e.mealType === mealType);
           const mealTotals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
           return (
-            <div key={mealType} className="rounded-lg border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900">
-              <div className="flex items-center justify-between border-b border-stone-100 px-4 py-2.5 dark:border-stone-800">
+            <div key={mealType} className="rounded-lg border border-border bg-surface">
+              <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold">{mealType}</h3>
-                  {entries.length > 0 && <span className="text-xs text-stone-400">{Math.round(mealTotals.calories)} kcal</span>}
+                  {entries.length > 0 && <span className="text-xs text-subtle">{Math.round(mealTotals.calories)} kcal</span>}
                 </div>
                 <button
                   onClick={() => setAddingFor(mealType)}
@@ -55,9 +55,9 @@ export default function DayPlan({ date, showSummary = true }: { date: string; sh
                 </button>
               </div>
               {entries.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-stone-400">Nothing logged yet.</p>
+                <p className="px-4 py-3 text-sm text-subtle">Nothing logged yet.</p>
               ) : (
-                <ul className="divide-y divide-stone-100 dark:divide-stone-800">
+                <ul className="divide-y divide-border">
                   {entries.map((entry) => (
                     <li key={entry.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
                       <div className="min-w-0">

@@ -28,9 +28,7 @@ export default function PlannerDayCell({
   return (
     <div
       className={`flex min-h-[110px] flex-col rounded-lg border p-1.5 text-left sm:min-h-[130px] sm:p-2 ${
-        inCurrentMonth
-          ? 'border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900'
-          : 'border-stone-100 bg-stone-50/50 dark:border-stone-900 dark:bg-stone-950/40'
+        inCurrentMonth ? 'border-border-strong bg-surface' : 'border-border bg-surface-muted'
       }`}
     >
       <div className="flex items-center justify-between">
@@ -48,7 +46,7 @@ export default function PlannerDayCell({
         </button>
         <button
           onClick={onAdd}
-          className="rounded p-0.5 text-stone-400 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/40"
+          className="rounded p-0.5 text-subtle hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-900/40"
           aria-label="Add planned food"
         >
           <Plus size={14} />
@@ -61,11 +59,11 @@ export default function PlannerDayCell({
             {label}
           </p>
         ))}
-        {extra > 0 && <p className="text-[11px] leading-tight text-stone-400">+{extra} more</p>}
+        {extra > 0 && <p className="text-[11px] leading-tight text-subtle">+{extra} more</p>}
       </button>
 
       {hasEntries && (
-        <div className="mt-1 border-t border-stone-100 pt-1 dark:border-stone-800">
+        <div className="mt-1 border-t border-border pt-1">
           <p className="text-xs font-semibold text-stone-700 dark:text-stone-200">{m.calories} kcal</p>
           <p className="text-[10px] font-medium">
             <span className="text-blue-600 dark:text-blue-400">P{m.protein}</span>{' '}

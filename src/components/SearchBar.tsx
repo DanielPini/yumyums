@@ -76,7 +76,7 @@ export default function SearchBar() {
       <div className="relative">
         <Search
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle"
         />
         <input
           type="text"
@@ -87,13 +87,13 @@ export default function SearchBar() {
           }}
           onFocus={() => setOpen(true)}
           placeholder="Search foods, meals, cuisines…"
-          className="w-full rounded-lg border border-stone-200 bg-white py-2 pl-9 pr-3 text-sm text-stone-900 placeholder:text-stone-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:placeholder:text-stone-500"
+          className="w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-subtle focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
       </div>
       {open && query && (
-        <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg dark:border-stone-700 dark:bg-stone-900">
+        <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
           {results.length === 0 ? (
-            <p className="px-3 py-3 text-sm text-stone-500">No matches for "{query}"</p>
+            <p className="px-3 py-3 text-sm text-muted">No matches for "{query}"</p>
           ) : (
             <ul className="max-h-80 overflow-y-auto py-1">
               {results.map((r) => (
@@ -109,7 +109,7 @@ export default function SearchBar() {
                   >
                     {r.icon}
                     <span className="flex-1 truncate">{r.label}</span>
-                    <span className="text-xs text-stone-400">{r.sublabel}</span>
+                    <span className="text-xs text-subtle">{r.sublabel}</span>
                   </button>
                 </li>
               ))}

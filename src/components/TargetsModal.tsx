@@ -17,7 +17,7 @@ export default function TargetsModal({
   const [fat, setFat] = useState(String(initial.fat));
 
   const inputClass =
-    'w-full rounded-md border border-stone-200 bg-white px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-950';
+    'w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100';
 
   return (
     <Modal title="Daily macro goals" onClose={onClose}>
@@ -35,24 +35,24 @@ export default function TargetsModal({
       >
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-xs font-medium text-stone-500">Calories (kcal)</label>
+            <label className="mb-1 block text-xs font-medium text-muted">Calories (kcal)</label>
             <input type="number" min="0" className={inputClass} value={calories} onChange={(e) => setCalories(e.target.value)} />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-stone-500">Protein (g)</label>
+            <label className="mb-1 block text-xs font-medium text-muted">Protein (g)</label>
             <input type="number" min="0" className={inputClass} value={protein} onChange={(e) => setProtein(e.target.value)} />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-stone-500">Carbs (g)</label>
+            <label className="mb-1 block text-xs font-medium text-muted">Carbs (g)</label>
             <input type="number" min="0" className={inputClass} value={carbs} onChange={(e) => setCarbs(e.target.value)} />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-stone-500">Fat (g)</label>
+            <label className="mb-1 block text-xs font-medium text-muted">Fat (g)</label>
             <input type="number" min="0" className={inputClass} value={fat} onChange={(e) => setFat(e.target.value)} />
           </div>
         </div>
         <div className="flex justify-end gap-2 pt-2">
-          <button type="button" onClick={onClose} className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800">
+          <button type="button" onClick={onClose} className="rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:bg-stone-100 dark:hover:bg-stone-800">
             Cancel
           </button>
           <button type="submit" className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700">

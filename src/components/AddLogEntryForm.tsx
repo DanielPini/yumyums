@@ -63,7 +63,7 @@ export default function AddLogEntryForm({
   }
 
   const inputClass =
-    'w-full rounded-md border border-stone-200 bg-white px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-stone-700 dark:bg-stone-950';
+    'w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100';
 
   return (
     <Fragment>
@@ -77,7 +77,7 @@ export default function AddLogEntryForm({
             className={`flex-1 rounded-md border px-3 py-1.5 text-sm font-medium capitalize ${
               sourceType === t
                 ? 'border-brand-400 bg-brand-50 text-brand-700 dark:border-brand-600 dark:bg-brand-900/40 dark:text-brand-200'
-                : 'border-stone-200 text-stone-500 dark:border-stone-700'
+                : 'border-border text-muted'
             }`}
           >
             {t}
@@ -86,7 +86,7 @@ export default function AddLogEntryForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-medium text-stone-500">Meal time</label>
+        <label className="mb-1 block text-xs font-medium text-muted">Meal time</label>
         <select className={inputClass} value={mealType} onChange={(e) => setMealType(e.target.value as MealType)}>
           {mealTypes.map((m) => (
             <option key={m} value={m}>
@@ -100,7 +100,7 @@ export default function AddLogEntryForm({
         <div className="space-y-2">
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <label className="mb-1 block text-xs font-medium text-stone-500">Food</label>
+              <label className="mb-1 block text-xs font-medium text-muted">Food</label>
               <select
                 className={inputClass}
                 value={foodId}
@@ -117,7 +117,7 @@ export default function AddLogEntryForm({
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-stone-500">Quantity</label>
+              <label className="mb-1 block text-xs font-medium text-muted">Quantity</label>
               <AmountInput food={selectedFood} amount={amount} onChange={setAmount} />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function AddLogEntryForm({
       ) : (
         <div className="flex gap-3">
           <div className="flex-1">
-            <label className="mb-1 block text-xs font-medium text-stone-500">Meal</label>
+            <label className="mb-1 block text-xs font-medium text-muted">Meal</label>
             <select className={inputClass} value={mealId} onChange={(e) => setMealId(e.target.value)}>
               {sortedMeals.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -142,7 +142,7 @@ export default function AddLogEntryForm({
             </select>
           </div>
           <div className="w-28">
-            <label className="mb-1 block text-xs font-medium text-stone-500">Servings</label>
+            <label className="mb-1 block text-xs font-medium text-muted">Servings</label>
             <input
               type="number"
               min="0"
@@ -156,13 +156,13 @@ export default function AddLogEntryForm({
       )}
 
       {previewMacros && (
-        <div className="rounded-md bg-stone-50 p-3 dark:bg-stone-800/50">
+        <div className="rounded-md bg-surface-muted p-3">
           <MacroBadges macros={previewMacros} />
         </div>
       )}
 
       <div className="flex justify-end gap-2 pt-2">
-        <button type="button" onClick={onCancel} className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800">
+        <button type="button" onClick={onCancel} className="rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:bg-stone-100 dark:hover:bg-stone-800">
           Cancel
         </button>
         <button

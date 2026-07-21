@@ -11,6 +11,7 @@ Built with React + TypeScript + Vite, Tailwind CSS, Zustand (state, persisted to
 - **Meals** — build meals from foods + quantities (mixing by-weight and by-item ingredients freely), tag them with a cuisine, mark favourites, see computed macros per serving, and write/view a step-by-step recipe for each one (via the book icon on each meal card).
 - **Cuisines** — organise foods/meals by cuisine and star your favourites, including Indian, Italian, Mexican, Mediterranean, East Asian, American and Vietnamese.
 - **Global search** — the header search box finds matches across foods, meals and cuisines.
+- **Appearance** — pick Light, Dark or System via the "Appearance" control (sidebar on desktop, palette icon in the header on mobile), plus an "Increased contrast" accessibility toggle that strengthens borders and secondary text, and 6 selectable color themes (Green, Ocean, Sunset, Berry, Violet, Slate). Your choice is saved and applied instantly, including on next visit.
 
 Comes pre-seeded with 141 foods, 20 meals (with full recipes — Indian dals and curries, Mexican mole/burritos/quesadillas/enchiladas, Vietnamese pho/bún/bánh mì/gỏi cuốn/bánh xèo, plus the original Italian/Mediterranean/American set) and 7 cuisines, with nutrition figures sourced from USDA-based data, so there's something to explore immediately — edit or delete freely.
 

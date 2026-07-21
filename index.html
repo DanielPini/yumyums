@@ -5,6 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YumYums – Vegetarian Meal Planner</title>
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('yumyums-theme');
+          var state = raw ? JSON.parse(raw).state : null;
+          var mode = (state && state.colorMode) || 'system';
+          var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          root.classList.toggle('dark', isDark);
+          root.dataset.contrast = state && state.highContrast ? 'high' : 'normal';
+          root.dataset.colorTheme = (state && state.colorTheme) || 'green';
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
