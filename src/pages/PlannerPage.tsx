@@ -5,6 +5,7 @@ import { getMonthGrid, monthLabel, WEEKDAY_LABELS } from '../utils/calendar';
 import { formatDisplayDate, todayStr } from '../utils/date';
 import { addMacros, emptyMacros, logEntryMacros } from '../utils/macros';
 import { describeLogEntry } from '../utils/logEntry';
+import { currentMealType } from '../utils/mealTime';
 import PlannerDayCell from '../components/PlannerDayCell';
 import Modal from '../components/Modal';
 import AddLogEntryForm from '../components/AddLogEntryForm';
@@ -132,7 +133,7 @@ export default function PlannerPage() {
         <Modal title={`Add to ${formatDisplayDate(quickAddDate)}`} onClose={() => setQuickAddDate(null)}>
           <AddLogEntryForm
             date={quickAddDate}
-            defaultMealType="Snack"
+            defaultMealType={currentMealType()}
             onSubmit={(entry) => {
               addLogEntry(entry);
               setQuickAddDate(null);
