@@ -34,6 +34,8 @@ export interface Food {
   baseUnit: BaseUnit;
   /** Macros per 100 base units (100g or 100ml) — every food supports by-weight logging. */
   macrosPer100: Macros;
+  /** Realistic default quantity (in baseUnit) to pre-fill when logging this food by weight, e.g. 10g for butter vs 200ml for milk. Falls back to 100 if unset. */
+  defaultServing?: number;
   /** Weight/volume (in baseUnit) of one typical piece, e.g. 1 egg = 50g. Enables by-item logging alongside by-weight. */
   pieceSize?: number;
   /** Label for the piece unit, e.g. "1 egg", "1 slice". Defaults to "1 piece" when pieceSize is set. */

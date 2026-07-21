@@ -26,7 +26,7 @@ export default function MealForm({
   const [cuisineId, setCuisineId] = useState<string | null>(initial?.cuisineId ?? null);
   const [favourite, setFavourite] = useState(initial?.favourite ?? false);
   const [ingredients, setIngredients] = useState<MealIngredient[]>(
-    initial?.ingredients ?? (foods[0] ? [{ foodId: foods[0].id, amount: defaultAmountForFood() }] : [])
+    initial?.ingredients ?? (foods[0] ? [{ foodId: foods[0].id, amount: defaultAmountForFood(foods[0]) }] : [])
   );
   const [recipeSteps, setRecipeSteps] = useState<string[]>(initial?.recipeSteps ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? '');
@@ -58,7 +58,7 @@ export default function MealForm({
 
   function addIngredient() {
     if (foods.length === 0) return;
-    setIngredients((prev) => [...prev, { foodId: foods[0].id, amount: defaultAmountForFood() }]);
+    setIngredients((prev) => [...prev, { foodId: foods[0].id, amount: defaultAmountForFood(foods[0]) }]);
   }
 
   function updateStep(index: number, value: string) {
@@ -136,7 +136,7 @@ export default function MealForm({
                 <select
                   className={`${inputClass} flex-1`}
                   value={ing.foodId}
-                  onChange={(e) => updateIngredient(i, { foodId: e.target.value, amount: defaultAmountForFood() })}
+                  onChange={(e) => updateIngredient(i, { foodId: e.target.value, amount: defaultAmountForFood(foodsById.get(e.target.value)) })}
                 >
                   {sortedFoods.map((f) => (
                     <option key={f.id} value={f.id}>

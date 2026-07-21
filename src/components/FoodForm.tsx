@@ -42,6 +42,7 @@ export default function FoodForm({
   const [protein, setProtein] = useState(String(initial?.macrosPer100.protein ?? ''));
   const [carbs, setCarbs] = useState(String(initial?.macrosPer100.carbs ?? ''));
   const [fat, setFat] = useState(String(initial?.macrosPer100.fat ?? ''));
+  const [defaultServing, setDefaultServing] = useState(String(initial?.defaultServing ?? 100));
   const [hasPiece, setHasPiece] = useState(!!initial?.pieceSize);
   const [pieceSize, setPieceSize] = useState(String(initial?.pieceSize ?? ''));
   const [pieceLabel, setPieceLabel] = useState(initial?.pieceLabel ?? '');
@@ -66,6 +67,7 @@ export default function FoodForm({
         carbs: Number(carbs) || 0,
         fat: Number(fat) || 0,
       },
+      defaultServing: Number(defaultServing) > 0 ? Number(defaultServing) : undefined,
       pieceSize: hasPiece && Number(pieceSize) > 0 ? Number(pieceSize) : undefined,
       pieceLabel: hasPiece && pieceLabel.trim() ? pieceLabel.trim() : undefined,
       cuisineIds,
@@ -136,6 +138,20 @@ export default function FoodForm({
             <input type="number" min="0" step="any" className={inputClass} value={fat} onChange={(e) => setFat(e.target.value)} required />
           </div>
         </div>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-medium text-stone-500">
+          Default serving size ({baseUnit}) — used to pre-fill quantity when logging by weight
+        </label>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          className={`${inputClass} max-w-[8rem]`}
+          value={defaultServing}
+          onChange={(e) => setDefaultServing(e.target.value)}
+        />
       </div>
 
       <div className="rounded-md border border-stone-200 p-3 dark:border-stone-700">

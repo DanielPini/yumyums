@@ -31,7 +31,7 @@ export default function AddLogEntryForm({
   const [sourceType, setSourceType] = useState<'food' | 'meal'>('food');
   const [mealType, setMealType] = useState<MealType>(defaultMealType);
   const [foodId, setFoodId] = useState(sortedFoods[0]?.id ?? '');
-  const [amount, setAmount] = useState<FoodAmount>(defaultAmountForFood());
+  const [amount, setAmount] = useState<FoodAmount>(defaultAmountForFood(sortedFoods[0]));
   const [mealId, setMealId] = useState(sortedMeals[0]?.id ?? '');
   const [servings, setServings] = useState(1);
   const [showAddFood, setShowAddFood] = useState(false);
@@ -58,7 +58,7 @@ export default function AddLogEntryForm({
   function handleAddFood(values: FoodFormValues) {
     const newId = addFood(values);
     setFoodId(newId);
-    setAmount(defaultAmountForFood());
+    setAmount(defaultAmountForFood(values));
     setShowAddFood(false);
   }
 
@@ -106,7 +106,7 @@ export default function AddLogEntryForm({
                 value={foodId}
                 onChange={(e) => {
                   setFoodId(e.target.value);
-                  setAmount(defaultAmountForFood());
+                  setAmount(defaultAmountForFood(foodsById.get(e.target.value)));
                 }}
               >
                 {sortedFoods.map((f) => (
