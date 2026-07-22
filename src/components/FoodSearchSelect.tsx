@@ -22,7 +22,7 @@ export default function FoodSearchSelect({
 }) {
   const selectedFood = foods.find((f) => f.id === value);
   const [query, setQuery] = useState(selectedFood?.name ?? '');
-  const [open, setOpen] = useState(autoFocus);
+  const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,12 +58,9 @@ export default function FoodSearchSelect({
         placeholder="Search foods…"
         onChange={(e) => {
           setQuery(e.target.value);
-          setOpen(true);
+          setOpen(e.target.value.trim().length > 0);
         }}
-        onFocus={(e) => {
-          setOpen(true);
-          e.target.select();
-        }}
+        onFocus={(e) => e.target.select()}
       />
       {open && (
         <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
