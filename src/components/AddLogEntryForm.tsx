@@ -13,11 +13,14 @@ import FoodForm, { type FoodFormValues } from './FoodForm';
 export default function AddLogEntryForm({
   date,
   defaultMealType,
+  initial,
   onSubmit,
   onCancel,
 }: {
   date: string;
   defaultMealType: MealType;
+  /** When set, pre-fills the form from an existing entry and the caller is expected to update it instead of adding a new one. */
+  initial?: LogEntry;
   onSubmit: (entry: Omit<LogEntry, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
 }) {
@@ -29,13 +32,17 @@ export default function AddLogEntryForm({
   const sortedFoods = useMemo(() => [...foods].sort((a, b) => a.name.localeCompare(b.name)), [foods]);
   const sortedMeals = useMemo(() => [...meals].sort((a, b) => a.name.localeCompare(b.name)), [meals]);
 
-  const [sourceType, setSourceType] = useState<'food' | 'meal'>('food');
-  const [mealType, setMealType] = useState<MealType>(defaultMealType);
-  const [foodId, setFoodId] = useState('');
-  const [amount, setAmount] = useState<FoodAmount>({ mode: 'weight', quantity: 100 });
-  const [mealId, setMealId] = useState(sortedMeals[0]?.id ?? '');
-  const [servings, setServings] = useState(1);
-  const [peopleServed, setPeopleServed] = useState(householdSize);
+  const [sourceType, setSourceType] = useState<'food' | 'meal'>(initial?.source.type ?? 'food');
+  const [mealType, setMealType] = useState<MealType>(initial?.mealType ?? defaultMealType);
+  const [foodId, setFoodId] = useState(initial?.source.type === 'food' ? initial.source.foodId : '');
+  const [amount, setAmount] = useState<FoodAmount>(
+    initial?.source.type === 'food' ? initial.source.amount : { mode: 'weight', quantity: 100 }
+  );
+  const [mealId, setMealId] = useState(initial?.source.type === 'meal' ? initial.source.mealId : (sortedMeals[0]?.id ?? ''));
+  const [servings, setServings] = useState(initial?.source.type === 'meal' ? initial.source.servings : 1);
+  const [peopleServed, setPeopleServed] = useState(
+    initial?.source.type === 'meal' ? (initial.source.peopleServed ?? householdSize) : householdSize
+  );
   const [showAddFood, setShowAddFood] = useState(false);
 
   const selectedFood = foodsById.get(foodId);
@@ -106,7 +113,7 @@ export default function AddLogEntryForm({
               <FoodSearchSelect
                 foods={sortedFoods}
                 value={foodId}
-                autoFocus
+                autoFocus={!initial}
                 onChange={(id) => {
                   setFoodId(id);
                   setAmount(defaultAmountForFood(foodsById.get(id)));
@@ -185,7 +192,7 @@ export default function AddLogEntryForm({
           disabled={(sourceType === 'food' && !foodId) || (sourceType === 'meal' && !mealId)}
           className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
         >
-          Log it
+          {initial ? 'Save changes' : 'Log it'}
         </button>
       </div>
       </form>
