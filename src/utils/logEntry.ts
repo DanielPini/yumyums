@@ -12,12 +12,13 @@ export function describeAmount(food: Food | undefined, amount: { mode: 'weight' 
 export function describeLogEntry(
   entry: LogEntry,
   foodsById: Map<string, Food>,
-  mealsById: Map<string, Meal>
+  mealsById: Map<string, Meal>,
+  options?: { showMealType?: boolean }
 ): string {
-  if (entry.source.type === 'food') {
-    const food = foodsById.get(entry.source.foodId);
-    return `${food?.name ?? 'Unknown food'} · ${describeAmount(food, entry.source.amount)}`;
-  }
-  const meal = mealsById.get(entry.source.mealId);
-  return `${meal?.name ?? 'Unknown meal'} · ${entry.source.servings}× serving`;
+  const base =
+    entry.source.type === 'food'
+      ? `${foodsById.get(entry.source.foodId)?.name ?? 'Unknown food'} · ${describeAmount(foodsById.get(entry.source.foodId), entry.source.amount)}`
+      : `${mealsById.get(entry.source.mealId)?.name ?? 'Unknown meal'} · ${entry.source.servings}× serving`;
+
+  return options?.showMealType ? `${entry.mealType[0]}: ${base}` : base;
 }

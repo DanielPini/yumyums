@@ -46,16 +46,6 @@ export default function Layout({ children }: { children: ReactNode }) {
           ))}
         </nav>
 
-        <div className="hidden min-h-0 flex-1 flex-col overflow-hidden px-2 pb-2 md:flex">
-          <div className="flex items-center gap-2 px-1 pb-1.5 pt-2 text-xs font-semibold uppercase tracking-wide text-subtle">
-            <ShoppingCart size={14} />
-            Shopping list
-          </div>
-          <div className="min-h-0 flex-1 overflow-y-auto pb-2">
-            <ShoppingList />
-          </div>
-        </div>
-
         <div className="hidden px-2 pb-4 md:block">
           <button
             type="button"
@@ -74,7 +64,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => setShowShoppingList(true)}
-            className="shrink-0 rounded-md p-2 text-subtle hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 md:hidden"
+            className="shrink-0 rounded-md p-2 text-subtle hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200"
             aria-label="Shopping list"
           >
             <ShoppingCart size={18} />

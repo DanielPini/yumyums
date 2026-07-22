@@ -54,14 +54,13 @@ export default function PlannerPage() {
     setWeekAnchor(today);
   }
 
-  // 3-column desktop split: Mon-Wed / Thu-Fri / Sat-Sun. 2-column tablet split: weekdays / weekend.
-  const desktopColumns = [weekDates.slice(0, 3), weekDates.slice(3, 5), weekDates.slice(5, 7)];
-  const tabletColumns = [weekDates.slice(0, 5), weekDates.slice(5, 7)];
+  // Desktop-only 2-column split: Mon-Thu / Fri-Sun.
+  const desktopColumns = [weekDates.slice(0, 4), weekDates.slice(4, 7)];
 
   function renderCard(date: string) {
     const entries = entriesByDate.get(date) ?? [];
     const totals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
-    const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById));
+    const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById, { showMealType: true }));
     return (
       <WeekDayCard
         key={date}
@@ -111,20 +110,11 @@ export default function PlannerPage() {
         </div>
       </div>
 
-      {/* Mobile: single column, all 7 days stacked. */}
-      <div className="flex flex-col gap-3 sm:hidden">{weekDates.map(renderCard)}</div>
+      {/* Mobile & tablet: single column, all 7 days stacked. */}
+      <div className="flex flex-col gap-3 lg:hidden">{weekDates.map(renderCard)}</div>
 
-      {/* Tablet: 2 columns — weekdays, weekend. */}
-      <div className="hidden gap-3 sm:grid sm:grid-cols-2 lg:hidden">
-        {tabletColumns.map((col, i) => (
-          <div key={i} className="flex flex-col gap-3">
-            {col.map(renderCard)}
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop: 3 columns — Mon-Wed, Thu-Fri, Sat-Sun. */}
-      <div className="hidden gap-3 lg:grid lg:grid-cols-3">
+      {/* Desktop: 2 columns — Mon-Thu, Fri-Sun. */}
+      <div className="hidden gap-3 lg:grid lg:grid-cols-2">
         {desktopColumns.map((col, i) => (
           <div key={i} className="flex flex-col gap-3">
             {col.map(renderCard)}
