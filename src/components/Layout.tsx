@@ -1,8 +1,10 @@
 import { useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { CalendarRange, Salad, UtensilsCrossed, Globe2, Leaf, Palette } from 'lucide-react';
+import { CalendarRange, Salad, UtensilsCrossed, Globe2, Leaf, Palette, ShoppingCart } from 'lucide-react';
 import SearchBar from './SearchBar';
 import AppearanceSettings from './AppearanceSettings';
+import ShoppingList from './ShoppingList';
+import Modal from './Modal';
 
 const navItems = [
   { to: '/', label: 'Planner', icon: CalendarRange, end: true },
@@ -13,6 +15,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [showAppearance, setShowAppearance] = useState(false);
+  const [showShoppingList, setShowShoppingList] = useState(false);
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -42,7 +45,18 @@ export default function Layout({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto hidden px-2 pb-4 md:block">
+
+        <div className="hidden min-h-0 flex-1 flex-col overflow-hidden px-2 pb-2 md:flex">
+          <div className="flex items-center gap-2 px-1 pb-1.5 pt-2 text-xs font-semibold uppercase tracking-wide text-subtle">
+            <ShoppingCart size={14} />
+            Shopping list
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto pb-2">
+            <ShoppingList />
+          </div>
+        </div>
+
+        <div className="hidden px-2 pb-4 md:block">
           <button
             type="button"
             onClick={() => setShowAppearance(true)}
@@ -59,6 +73,14 @@ export default function Layout({ children }: { children: ReactNode }) {
           <SearchBar />
           <button
             type="button"
+            onClick={() => setShowShoppingList(true)}
+            className="shrink-0 rounded-md p-2 text-subtle hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 md:hidden"
+            aria-label="Shopping list"
+          >
+            <ShoppingCart size={18} />
+          </button>
+          <button
+            type="button"
             onClick={() => setShowAppearance(true)}
             className="shrink-0 rounded-md p-2 text-subtle hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 md:hidden"
             aria-label="Appearance settings"
@@ -70,6 +92,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       </div>
 
       {showAppearance && <AppearanceSettings onClose={() => setShowAppearance(false)} />}
+      {showShoppingList && (
+        <Modal title="Shopping list" onClose={() => setShowShoppingList(false)}>
+          <ShoppingList />
+        </Modal>
+      )}
     </div>
   );
 }
