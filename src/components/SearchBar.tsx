@@ -36,7 +36,12 @@ export default function SearchBar() {
     if (!q) return [];
 
     const foodResults: Result[] = foods
-      .filter((f) => f.name.toLowerCase().includes(q) || f.category.toLowerCase().includes(q))
+      .filter(
+        (f) =>
+          f.name.toLowerCase().includes(q) ||
+          f.category.toLowerCase().includes(q) ||
+          f.aliases?.some((a) => a.toLowerCase().includes(q))
+      )
       .slice(0, 5)
       .map((f) => ({
         id: `food-${f.id}`,

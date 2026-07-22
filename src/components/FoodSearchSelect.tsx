@@ -40,7 +40,9 @@ export default function FoodSearchSelect({
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const pool = q ? foods.filter((f) => f.name.toLowerCase().includes(q)) : foods;
+    const pool = q
+      ? foods.filter((f) => f.name.toLowerCase().includes(q) || f.aliases?.some((a) => a.toLowerCase().includes(q)))
+      : foods;
     return pool.slice(0, 30);
   }, [foods, query]);
 

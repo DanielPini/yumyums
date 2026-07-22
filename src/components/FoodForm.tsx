@@ -48,6 +48,7 @@ export default function FoodForm({
   const [pieceLabel, setPieceLabel] = useState(initial?.pieceLabel ?? '');
   const [defaultMode, setDefaultMode] = useState<'weight' | 'piece'>(initial?.defaultMode ?? 'weight');
   const [cuisineIds, setCuisineIds] = useState<string[]>(initial?.cuisineIds ?? []);
+  const [aliases, setAliases] = useState((initial?.aliases ?? []).join(', '));
   const [notes, setNotes] = useState(initial?.notes ?? '');
 
   function toggleCuisine(id: string) {
@@ -57,6 +58,7 @@ export default function FoodForm({
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim()) return;
+    const parsedAliases = aliases.split(',').map((a) => a.trim()).filter(Boolean);
     onSubmit({
       name: name.trim(),
       category,
@@ -73,6 +75,7 @@ export default function FoodForm({
       pieceLabel: hasPiece && pieceLabel.trim() ? pieceLabel.trim() : undefined,
       defaultMode: hasPiece && defaultMode === 'piece' ? 'piece' : undefined,
       cuisineIds,
+      aliases: parsedAliases.length > 0 ? parsedAliases : undefined,
       notes: notes.trim() || undefined,
     });
   }
@@ -205,6 +208,17 @@ export default function FoodForm({
           ))}
           {cuisines.length === 0 && <p className="text-xs text-subtle">No cuisines yet — add one on the Cuisines page.</p>}
         </div>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-medium text-muted">Alternative names (optional, comma-separated)</label>
+        <input
+          className={inputClass}
+          placeholder="e.g. Capsicum, Sweet Pepper"
+          value={aliases}
+          onChange={(e) => setAliases(e.target.value)}
+        />
+        <p className="mt-1 text-[11px] text-subtle">These also match when searching for this food.</p>
       </div>
 
       <div>

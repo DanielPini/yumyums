@@ -37,7 +37,7 @@ export default function FoodsPage() {
     const q = query.trim().toLowerCase();
     return foods
       .filter((f) => (categoryFilter === 'All' ? true : f.category === categoryFilter))
-      .filter((f) => (q ? f.name.toLowerCase().includes(q) : true))
+      .filter((f) => (q ? f.name.toLowerCase().includes(q) || f.aliases?.some((a) => a.toLowerCase().includes(q)) : true))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [foods, query, categoryFilter]);
 

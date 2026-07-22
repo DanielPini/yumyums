@@ -25,6 +25,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-chickpeas',
     name: 'Chickpeas (cooked)',
+    aliases: ['Garbanzo Beans'],
     category: 'Legume',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -36,6 +37,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-chickpeas-canned',
     name: 'Canned Chickpeas (drained)',
+    aliases: ['Garbanzo Beans'],
     category: 'Legume',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -112,6 +114,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-yogurt',
     name: 'Plain Yogurt',
+    aliases: ['Yoghurt'],
     category: 'Dairy',
     dietType: 'vegetarian',
     baseUnit: 'g',
@@ -307,6 +310,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-soy-sauce',
     name: 'Soy Sauce',
+    aliases: ['Soya Sauce'],
     category: 'Spice & Condiment',
     dietType: 'vegan',
     baseUnit: 'ml',
@@ -390,6 +394,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-milk',
     name: 'Whole Milk',
+    aliases: ['Full Cream Milk'],
     category: 'Dairy',
     dietType: 'vegetarian',
     baseUnit: 'ml',
@@ -483,6 +488,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-cookie-choc-chip',
     name: 'Chocolate Chip Cookie',
+    aliases: ['Chocolate Chip Biscuit'],
     category: 'Sweets & Desserts',
     dietType: 'vegetarian',
     baseUnit: 'g',
@@ -524,6 +530,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-mushroom',
     name: 'Mushroom (white)',
+    aliases: ['Button Mushroom'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -537,6 +544,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-bell-pepper',
     name: 'Bell Pepper',
+    aliases: ['Capsicum', 'Sweet Pepper'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -777,6 +785,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-pasta-wholewheat',
     name: 'Whole Wheat Pasta (cooked)',
+    aliases: ['Wholemeal Pasta'],
     category: 'Grain',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -814,6 +823,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-zucchini',
     name: 'Zucchini',
+    aliases: ['Courgette'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -972,6 +982,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-eggplant',
     name: 'Eggplant',
+    aliases: ['Aubergine', 'Brinjal'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -985,6 +996,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-green-beans',
     name: 'Green Beans',
+    aliases: ['French Beans'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1013,6 +1025,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-bread-wholewheat',
     name: 'Whole Wheat Bread',
+    aliases: ['Wholemeal Bread'],
     category: 'Grain',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1148,6 +1161,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-yogurt-greek',
     name: 'Greek Yogurt',
+    aliases: ['Greek Yoghurt'],
     category: 'Dairy',
     dietType: 'vegetarian',
     baseUnit: 'g',
@@ -1159,6 +1173,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-yogurt-coconut',
     name: 'Coconut Yogurt',
+    aliases: ['Coconut Yoghurt'],
     category: 'Dairy',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1207,6 +1222,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-soy-milk',
     name: 'Soy Milk (unsweetened)',
+    aliases: ['Soya Milk'],
     category: 'Beverage',
     dietType: 'vegan',
     baseUnit: 'ml',
@@ -1414,6 +1430,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-jalapeno',
     name: 'Jalapeño',
+    aliases: ['Jalapeno'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1442,6 +1459,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-rice-vermicelli',
     name: 'Rice Vermicelli Noodles (cooked)',
+    aliases: ['Rice Noodles'],
     category: 'Grain',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1512,6 +1530,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-bean-sprouts',
     name: 'Bean Sprouts',
+    aliases: ['Beansprouts'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1547,6 +1566,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-peanuts-roasted',
     name: 'Roasted Peanuts',
+    aliases: ['Groundnuts'],
     category: 'Nuts & Seeds',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1558,6 +1578,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-spring-onion',
     name: 'Spring Onion (Scallion)',
+    aliases: ['Green Onion'],
     category: 'Vegetable',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1584,6 +1605,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-flour-allpurpose',
     name: 'All-Purpose Flour',
+    aliases: ['Plain Flour'],
     category: 'Grain',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1595,6 +1617,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-flour-wholewheat',
     name: 'Whole Wheat Flour',
+    aliases: ['Wholemeal Flour'],
     category: 'Grain',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1617,6 +1640,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-flour-besan',
     name: 'Chickpea Flour (Besan)',
+    aliases: ['Gram Flour'],
     category: 'Grain',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1639,6 +1663,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-sugar-granulated',
     name: 'Granulated Sugar',
+    aliases: ['White Sugar'],
     category: 'Spice & Condiment',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1661,6 +1686,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-sugar-powdered',
     name: 'Powdered Sugar',
+    aliases: ['Icing Sugar', "Confectioner's Sugar"],
     category: 'Spice & Condiment',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1683,6 +1709,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-baking-soda',
     name: 'Baking Soda',
+    aliases: ['Bicarbonate of Soda'],
     category: 'Other',
     dietType: 'vegan',
     baseUnit: 'g',
@@ -1694,6 +1721,7 @@ export const seedFoods: Food[] = [
   {
     id: 'food-vanilla-extract',
     name: 'Vanilla Extract',
+    aliases: ['Vanilla Essence'],
     category: 'Spice & Condiment',
     dietType: 'vegan',
     baseUnit: 'ml',

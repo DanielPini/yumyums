@@ -42,6 +42,8 @@ export interface Food {
   pieceLabel?: string;
   /** Which mode to pre-fill when logging this food (only relevant when pieceSize is set). Defaults to 'weight'. */
   defaultMode?: 'weight' | 'piece';
+  /** Alternative names/spellings that should also match this food when searching, e.g. "Capsicum" for Bell Pepper. */
+  aliases?: string[];
   cuisineIds: string[];
   notes?: string;
   createdAt: number;
