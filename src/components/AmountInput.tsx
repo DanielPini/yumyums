@@ -14,7 +14,7 @@ export default function AmountInput({
   onChange: (amount: FoodAmount) => void;
 }) {
   const hasPiece = !!food?.pieceSize;
-  const pieceLabel = food?.pieceLabel ?? '1 piece';
+  const pieceLabel = food?.pieceLabel ?? 'piece';
 
   return (
     <div className="flex items-center gap-2">
@@ -30,17 +30,6 @@ export default function AmountInput({
         <div className="flex shrink-0 overflow-hidden rounded-md border border-border text-xs">
           <button
             type="button"
-            onClick={() => onChange(amount.mode === 'weight' ? amount : { mode: 'weight', quantity: food?.defaultServing ?? 100 })}
-            className={`px-2 py-1.5 font-medium ${
-              amount.mode === 'weight'
-                ? 'bg-brand-500 text-white'
-                : 'bg-surface text-muted hover:bg-stone-50 dark:hover:bg-stone-800'
-            }`}
-          >
-            {food?.baseUnit}
-          </button>
-          <button
-            type="button"
             onClick={() => onChange(amount.mode === 'piece' ? amount : { mode: 'piece', quantity: 1 })}
             className={`px-2 py-1.5 font-medium ${
               amount.mode === 'piece'
@@ -49,6 +38,17 @@ export default function AmountInput({
             }`}
           >
             {pieceLabel}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange(amount.mode === 'weight' ? amount : { mode: 'weight', quantity: food?.defaultServing ?? 100 })}
+            className={`px-2 py-1.5 font-medium ${
+              amount.mode === 'weight'
+                ? 'bg-brand-500 text-white'
+                : 'bg-surface text-muted hover:bg-stone-50 dark:hover:bg-stone-800'
+            }`}
+          >
+            {food?.baseUnit}
           </button>
         </div>
       ) : (

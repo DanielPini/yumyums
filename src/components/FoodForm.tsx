@@ -46,7 +46,7 @@ export default function FoodForm({
   const [hasPiece, setHasPiece] = useState(!!initial?.pieceSize);
   const [pieceSize, setPieceSize] = useState(String(initial?.pieceSize ?? ''));
   const [pieceLabel, setPieceLabel] = useState(initial?.pieceLabel ?? '');
-  const [defaultMode, setDefaultMode] = useState<'weight' | 'piece'>(initial?.defaultMode ?? 'weight');
+  const [forceWeightDefault, setForceWeightDefault] = useState(initial?.defaultMode === 'weight');
   const [cuisineIds, setCuisineIds] = useState<string[]>(initial?.cuisineIds ?? []);
   const [aliases, setAliases] = useState((initial?.aliases ?? []).join(', '));
   const [notes, setNotes] = useState(initial?.notes ?? '');
@@ -73,7 +73,7 @@ export default function FoodForm({
       defaultServing: Number(defaultServing) > 0 ? Number(defaultServing) : undefined,
       pieceSize: hasPiece && Number(pieceSize) > 0 ? Number(pieceSize) : undefined,
       pieceLabel: hasPiece && pieceLabel.trim() ? pieceLabel.trim() : undefined,
-      defaultMode: hasPiece && defaultMode === 'piece' ? 'piece' : undefined,
+      defaultMode: hasPiece && forceWeightDefault ? 'weight' : undefined,
       cuisineIds,
       aliases: parsedAliases.length > 0 ? parsedAliases : undefined,
       notes: notes.trim() || undefined,
@@ -162,7 +162,7 @@ export default function FoodForm({
       <div className="rounded-md border border-border p-3">
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={hasPiece} onChange={(e) => setHasPiece(e.target.checked)} className="h-4 w-4 rounded accent-brand-600" />
-          Also has a typical item size (e.g. "1 egg", "1 slice")
+          Also has a typical item size (e.g. "egg", "slice")
         </label>
         {hasPiece && (
           <div className="mt-3 grid grid-cols-2 gap-3">
@@ -171,8 +171,8 @@ export default function FoodForm({
               <input type="number" min="0" step="any" className={inputClass} value={pieceSize} onChange={(e) => setPieceSize(e.target.value)} />
             </div>
             <div>
-              <label className="mb-1 block text-[11px] text-subtle">Item label</label>
-              <input className={inputClass} placeholder="1 egg" value={pieceLabel} onChange={(e) => setPieceLabel(e.target.value)} />
+              <label className="mb-1 block text-[11px] text-subtle">Item label (no leading count — e.g. "egg", or "can (400g)")</label>
+              <input className={inputClass} placeholder="egg" value={pieceLabel} onChange={(e) => setPieceLabel(e.target.value)} />
             </div>
           </div>
         )}
@@ -180,11 +180,11 @@ export default function FoodForm({
           <label className="mt-3 flex items-center gap-2 text-sm">
             <input
               type="checkbox"
-              checked={defaultMode === 'piece'}
-              onChange={(e) => setDefaultMode(e.target.checked ? 'piece' : 'weight')}
+              checked={forceWeightDefault}
+              onChange={(e) => setForceWeightDefault(e.target.checked)}
               className="h-4 w-4 rounded accent-brand-600"
             />
-            Default to item count (e.g. "1 tomato") instead of weight when logging
+            Default to weight instead of item count when logging (item count is the default otherwise)
           </label>
         )}
       </div>
