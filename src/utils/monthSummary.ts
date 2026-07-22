@@ -12,6 +12,10 @@ export interface MonthSummary {
   avgPct: MacroPercentages;
   daysLogged: number;
   entryCount: number;
+  /** Distinct saved meals (recipes) logged this month. */
+  distinctMealCount: number;
+  /** Distinct foods eaten this month, whether logged directly or as part of a saved meal. */
+  distinctIngredientCount: number;
 }
 
 /** Aggregates a calendar month's log entries: most-logged meals and the overall macro split. */
@@ -42,11 +46,24 @@ export function getMonthSummary(
 
   const totals = monthEntries.reduce<Macros>((acc, e) => addMacros(acc, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
 
+  const distinctMealIds = new Set<string>();
+  const distinctFoodIds = new Set<string>();
+  for (const entry of monthEntries) {
+    if (entry.source.type === 'meal') {
+      distinctMealIds.add(entry.source.mealId);
+      mealsById.get(entry.source.mealId)?.ingredients.forEach((ing) => distinctFoodIds.add(ing.foodId));
+    } else {
+      distinctFoodIds.add(entry.source.foodId);
+    }
+  }
+
   return {
     topMeals,
     totals,
     avgPct: macroPercentages(totals),
     daysLogged: new Set(monthEntries.map((e) => e.date)).size,
     entryCount: monthEntries.length,
+    distinctMealCount: distinctMealIds.size,
+    distinctIngredientCount: distinctFoodIds.size,
   };
 }

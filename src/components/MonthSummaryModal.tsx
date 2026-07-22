@@ -65,6 +65,13 @@ export default function MonthSummaryModal({ onClose }: { onClose: () => void }) 
           <p className="text-center text-sm text-subtle">Nothing logged in {monthLabel} yet.</p>
         ) : (
           <>
+            <p className="text-center text-sm text-muted">
+              This month you logged <span className="font-semibold text-ink">{summary.distinctMealCount}</span> different meal
+              {summary.distinctMealCount === 1 ? '' : 's'} with{' '}
+              <span className="font-semibold text-ink">{summary.distinctIngredientCount}</span> different ingredient
+              {summary.distinctIngredientCount === 1 ? '' : 's'}.
+            </p>
+
             <div>
               <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-subtle">
                 <Trophy size={13} /> Top meals
