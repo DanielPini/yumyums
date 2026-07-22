@@ -26,8 +26,11 @@ export function amountToBaseUnits(food: Food, amount: FoodAmount): number {
   return (food.pieceSize ?? 0) * amount.quantity;
 }
 
-/** Weight-mode amount pre-filled with the food's recommended serving size (falls back to 100 if unset). */
-export function defaultAmountForFood(food?: Pick<Food, 'defaultServing'>): FoodAmount {
+/** Amount pre-filled when a food is first selected: a single piece for foods that default to piece mode, otherwise the food's recommended serving weight (falls back to 100 if unset). */
+export function defaultAmountForFood(food?: Pick<Food, 'defaultServing' | 'defaultMode' | 'pieceSize'>): FoodAmount {
+  if (food?.defaultMode === 'piece' && food.pieceSize) {
+    return { mode: 'piece', quantity: 1 };
+  }
   return { mode: 'weight', quantity: food?.defaultServing ?? 100 };
 }
 

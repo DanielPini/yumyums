@@ -46,6 +46,7 @@ export default function FoodForm({
   const [hasPiece, setHasPiece] = useState(!!initial?.pieceSize);
   const [pieceSize, setPieceSize] = useState(String(initial?.pieceSize ?? ''));
   const [pieceLabel, setPieceLabel] = useState(initial?.pieceLabel ?? '');
+  const [defaultMode, setDefaultMode] = useState<'weight' | 'piece'>(initial?.defaultMode ?? 'weight');
   const [cuisineIds, setCuisineIds] = useState<string[]>(initial?.cuisineIds ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? '');
 
@@ -70,6 +71,7 @@ export default function FoodForm({
       defaultServing: Number(defaultServing) > 0 ? Number(defaultServing) : undefined,
       pieceSize: hasPiece && Number(pieceSize) > 0 ? Number(pieceSize) : undefined,
       pieceLabel: hasPiece && pieceLabel.trim() ? pieceLabel.trim() : undefined,
+      defaultMode: hasPiece && defaultMode === 'piece' ? 'piece' : undefined,
       cuisineIds,
       notes: notes.trim() || undefined,
     });
@@ -170,6 +172,17 @@ export default function FoodForm({
               <input className={inputClass} placeholder="1 egg" value={pieceLabel} onChange={(e) => setPieceLabel(e.target.value)} />
             </div>
           </div>
+        )}
+        {hasPiece && (
+          <label className="mt-3 flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={defaultMode === 'piece'}
+              onChange={(e) => setDefaultMode(e.target.checked ? 'piece' : 'weight')}
+              className="h-4 w-4 rounded accent-brand-600"
+            />
+            Default to item count (e.g. "1 tomato") instead of weight when logging
+          </label>
         )}
       </div>
 

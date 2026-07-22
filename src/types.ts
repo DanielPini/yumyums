@@ -40,6 +40,8 @@ export interface Food {
   pieceSize?: number;
   /** Label for the piece unit, e.g. "1 egg", "1 slice". Defaults to "1 piece" when pieceSize is set. */
   pieceLabel?: string;
+  /** Which mode to pre-fill when logging this food (only relevant when pieceSize is set). Defaults to 'weight'. */
+  defaultMode?: 'weight' | 'piece';
   cuisineIds: string[];
   notes?: string;
   createdAt: number;
