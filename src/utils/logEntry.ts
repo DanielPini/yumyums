@@ -2,22 +2,30 @@ import type { Food, LogEntry, Meal } from '../types';
 
 const FRACTION_GLYPHS: Record<string, string> = { '0.25': '¼', '0.5': '½', '0.75': '¾' };
 
-function formatPieceQuantity(quantity: number, pieceLabel: string): string {
+/** Inserts "(s)" after the first word of a piece label, e.g. "can (400g)" -> "can(s) (400g)". */
+function pluralizePieceLabel(pieceLabel: string): string {
+  const spaceIdx = pieceLabel.indexOf(' ');
+  if (spaceIdx === -1) return `${pieceLabel}(s)`;
+  return `${pieceLabel.slice(0, spaceIdx)}(s)${pieceLabel.slice(spaceIdx)}`;
+}
+
+/**
+ * Formats a piece quantity against a food's piece label, which carries no leading count itself
+ * (e.g. "banana", or "can (400g)" when the size needs to be explicit because it varies by
+ * product). Fractions render as a glyph ("½ onion"); whole quantities get their own count
+ * ("1 can (400g)", "3 banana(s)").
+ */
+export function formatPieceQuantity(quantity: number, pieceLabel: string): string {
   const glyph = FRACTION_GLYPHS[String(quantity)];
-  if (glyph) return `${glyph} ${pieceLabel.replace(/^1\s+/, '')}`;
-  if (quantity === 1) return pieceLabel;
-  return `${quantity}× ${pieceLabel}`;
+  if (glyph) return `${glyph} ${pieceLabel}`;
+  if (quantity === 1) return `1 ${pieceLabel}`;
+  return `${quantity} ${pluralizePieceLabel(pieceLabel)}`;
 }
 
 export function describeAmount(food: Food | undefined, amount: { mode: 'weight' | 'piece'; quantity: number }): string {
   if (!food) return `${amount.quantity}`;
   if (amount.mode === 'piece') {
-    const pieceText = formatPieceQuantity(amount.quantity, food.pieceLabel ?? 'piece');
-    if (food.pieceSize) {
-      const grams = Math.round(food.pieceSize * amount.quantity);
-      return `${pieceText} (${grams}${food.baseUnit})`;
-    }
-    return pieceText;
+    return formatPieceQuantity(amount.quantity, food.pieceLabel ?? 'piece');
   }
   return `${amount.quantity}${food.baseUnit}`;
 }

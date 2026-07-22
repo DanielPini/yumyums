@@ -1,4 +1,5 @@
 import type { Food, FoodAmount, LogEntry, Meal } from '../types';
+import { formatPieceQuantity } from './logEntry';
 
 export interface ShoppingAmount {
   /** Summed weight/volume quantity, in the food's own baseUnit (g or ml). */
@@ -52,19 +53,14 @@ function roundQty(n: number): number {
   return Math.round(n * 10) / 10;
 }
 
-/** Human-readable total, e.g. "450g", "3× 1 avocado (450g)", or "150g + 2× 1 slice" for a food logged in mixed units. */
+/** Human-readable total, e.g. "450g", "3 banana(s)", or "150g + 2 slice(s)" for a food logged in mixed units. */
 export function formatShoppingAmount(food: Food, amount: ShoppingAmount): string {
   const parts: string[] = [];
   if (amount.weightQty > 0) {
     parts.push(`${roundQty(amount.weightQty)}${food.baseUnit}`);
   }
   if (amount.pieceQty > 0) {
-    const pieceQty = roundQty(amount.pieceQty);
-    let pieceText = `${pieceQty}× ${food.pieceLabel ?? 'piece'}`;
-    if (food.pieceSize) {
-      pieceText += ` (${Math.round(food.pieceSize * pieceQty)}${food.baseUnit})`;
-    }
-    parts.push(pieceText);
+    parts.push(formatPieceQuantity(roundQty(amount.pieceQty), food.pieceLabel ?? 'piece'));
   }
   return parts.join(' + ');
 }
