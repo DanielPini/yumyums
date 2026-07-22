@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { Check, Copy } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { useShoppingListStore } from '../store/useShoppingListStore';
 import { formatShoppingAmount, getUpcomingShoppingAmounts, type ShoppingAmount } from '../utils/shoppingList';
@@ -12,6 +13,7 @@ export default function ShoppingList() {
   const foods = useAppStore((s) => s.foods);
   const checkedFoodIds = useShoppingListStore((s) => s.checkedFoodIds);
   const toggleChecked = useShoppingListStore((s) => s.toggleChecked);
+  const [copied, setCopied] = useState(false);
 
   const items = useMemo(() => {
     const foodsById = new Map(foods.map((f) => [f.id, f]));
@@ -29,27 +31,47 @@ export default function ShoppingList() {
     return <p className="text-sm text-subtle">Nothing planned yet — foods you log for today or later show up here.</p>;
   }
 
+  const uncheckedItems = items.filter(({ food }) => !checkedFoodIds[food.id]);
+
+  async function handleCopy() {
+    const text = uncheckedItems.map(({ food, amount }) => `${food.name} — ${formatShoppingAmount(food, amount)}`).join('\n');
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
-    <ul className="space-y-0.5">
-      {items.map(({ food, amount }) => {
-        const checked = !!checkedFoodIds[food.id];
-        return (
-          <li key={food.id}>
-            <label className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-sm hover:bg-stone-100 dark:hover:bg-stone-800">
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={() => toggleChecked(food.id)}
-                className="h-4 w-4 shrink-0 rounded accent-brand-600"
-              />
-              <span className={`truncate ${checked ? 'text-stone-300 dark:text-stone-600' : ''}`}>{food.name}</span>
-              <span className={`ml-auto shrink-0 text-xs ${checked ? 'text-stone-300 dark:text-stone-600' : 'text-subtle'}`}>
-                {formatShoppingAmount(food, amount)}
-              </span>
-            </label>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="space-y-2">
+      <button
+        type="button"
+        onClick={handleCopy}
+        disabled={uncheckedItems.length === 0}
+        className="flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-xs font-medium text-muted hover:bg-stone-100 disabled:opacity-40 disabled:hover:bg-transparent dark:hover:bg-stone-800"
+      >
+        {copied ? <Check size={13} /> : <Copy size={13} />}
+        {copied ? 'Copied!' : 'Copy list to share'}
+      </button>
+      <ul className="space-y-0.5">
+        {items.map(({ food, amount }) => {
+          const checked = !!checkedFoodIds[food.id];
+          return (
+            <li key={food.id}>
+              <label className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-sm hover:bg-stone-100 dark:hover:bg-stone-800">
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => toggleChecked(food.id)}
+                  className="h-4 w-4 shrink-0 rounded accent-brand-600"
+                />
+                <span className={`truncate ${checked ? 'text-stone-300 dark:text-stone-600' : ''}`}>{food.name}</span>
+                <span className={`ml-auto shrink-0 text-xs ${checked ? 'text-stone-300 dark:text-stone-600' : 'text-subtle'}`}>
+                  {formatShoppingAmount(food, amount)}
+                </span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
