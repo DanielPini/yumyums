@@ -68,7 +68,7 @@ export default function PlannerPage() {
   const isCurrentMonth = year === Number(today.slice(0, 4)) && month === Number(today.slice(5, 7)) - 1;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-4">
+    <div className="mx-auto max-w-[1800px] space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button
@@ -103,30 +103,32 @@ export default function PlannerPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-subtle sm:gap-2">
-        {WEEKDAY_LABELS.map((d) => (
-          <div key={d}>{d}</div>
-        ))}
-      </div>
+      <div className="@container">
+        <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-subtle sm:gap-2 sm:text-[clamp(0.6875rem,1.7cqw,1rem)]">
+          {WEEKDAY_LABELS.map((d) => (
+            <div key={d}>{d}</div>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
-        {cells.map((cell) => {
-          const entries = entriesByDate.get(cell.date) ?? [];
-          const totals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
-          const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById));
-          return (
-            <PlannerDayCell
-              key={cell.date}
-              dayNumber={Number(cell.date.slice(8, 10))}
-              isToday={cell.date === today}
-              inCurrentMonth={cell.inCurrentMonth}
-              entryLabels={entryLabels}
-              totals={totals}
-              onAdd={() => setQuickAddDate(cell.date)}
-              onOpen={() => setDetailDate(cell.date)}
-            />
-          );
-        })}
+        <div className="mt-1.5 grid grid-cols-7 gap-1.5 sm:mt-2 sm:gap-2">
+          {cells.map((cell) => {
+            const entries = entriesByDate.get(cell.date) ?? [];
+            const totals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
+            const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById));
+            return (
+              <PlannerDayCell
+                key={cell.date}
+                dayNumber={Number(cell.date.slice(8, 10))}
+                isToday={cell.date === today}
+                inCurrentMonth={cell.inCurrentMonth}
+                entryLabels={entryLabels}
+                totals={totals}
+                onAdd={() => setQuickAddDate(cell.date)}
+                onOpen={() => setDetailDate(cell.date)}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {quickAddDate && (
