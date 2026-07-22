@@ -48,14 +48,19 @@ function roundQty(n: number): number {
   return Math.round(n * 10) / 10;
 }
 
-/** Human-readable total, e.g. "450g", "3× 1 avocado", or "150g + 2× 1 slice" for a food logged in mixed units. */
+/** Human-readable total, e.g. "450g", "3× 1 avocado (450g)", or "150g + 2× 1 slice" for a food logged in mixed units. */
 export function formatShoppingAmount(food: Food, amount: ShoppingAmount): string {
   const parts: string[] = [];
   if (amount.weightQty > 0) {
     parts.push(`${roundQty(amount.weightQty)}${food.baseUnit}`);
   }
   if (amount.pieceQty > 0) {
-    parts.push(`${roundQty(amount.pieceQty)}× ${food.pieceLabel ?? 'piece'}`);
+    const pieceQty = roundQty(amount.pieceQty);
+    let pieceText = `${pieceQty}× ${food.pieceLabel ?? 'piece'}`;
+    if (food.pieceSize) {
+      pieceText += ` (${Math.round(food.pieceSize * pieceQty)}${food.baseUnit})`;
+    }
+    parts.push(pieceText);
   }
   return parts.join(' + ');
 }
