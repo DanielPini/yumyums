@@ -56,6 +56,25 @@ export function roundMacros(m: Macros): Macros {
 
 export const emptyMacros = (): Macros => ({ ...ZERO });
 
+export const CALORIES_PER_GRAM = { protein: 4, carbs: 4, fat: 9 };
+
+export interface MacroPercentages {
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+}
+
+/** Share of total macro-derived calories each macro represents. Null values (not 0) when nothing is logged, so callers can distinguish "no data" from "0%". */
+export function macroPercentages(m: Macros): MacroPercentages {
+  const macroCalories = m.protein * CALORIES_PER_GRAM.protein + m.carbs * CALORIES_PER_GRAM.carbs + m.fat * CALORIES_PER_GRAM.fat;
+  if (macroCalories <= 0) return { protein: null, carbs: null, fat: null };
+  return {
+    protein: Math.round((m.protein * CALORIES_PER_GRAM.protein * 100) / macroCalories),
+    carbs: Math.round((m.carbs * CALORIES_PER_GRAM.carbs * 100) / macroCalories),
+    fat: Math.round((m.fat * CALORIES_PER_GRAM.fat * 100) / macroCalories),
+  };
+}
+
 export function logEntryMacros(
   entry: LogEntry,
   foodsById: Map<string, Food>,
