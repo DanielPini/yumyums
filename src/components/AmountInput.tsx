@@ -30,7 +30,7 @@ export default function AmountInput({
         <div className="flex shrink-0 overflow-hidden rounded-md border border-border text-xs">
           <button
             type="button"
-            onClick={() => onChange({ mode: 'weight', quantity: amount.quantity })}
+            onClick={() => onChange(amount.mode === 'weight' ? amount : { mode: 'weight', quantity: food?.defaultServing ?? 100 })}
             className={`px-2 py-1.5 font-medium ${
               amount.mode === 'weight'
                 ? 'bg-brand-500 text-white'
@@ -41,7 +41,7 @@ export default function AmountInput({
           </button>
           <button
             type="button"
-            onClick={() => onChange({ mode: 'piece', quantity: amount.quantity })}
+            onClick={() => onChange(amount.mode === 'piece' ? amount : { mode: 'piece', quantity: 1 })}
             className={`px-2 py-1.5 font-medium ${
               amount.mode === 'piece'
                 ? 'bg-brand-500 text-white'
