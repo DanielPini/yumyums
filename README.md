@@ -2,7 +2,7 @@
 
 A vegetarian meal planner. Track foods and their quantities/macros, search across foods, meals and cuisines, save favourite meals and cuisines, log what you eat by day, and see calories/protein/carbs/fat vs. your daily goals.
 
-Built with React + TypeScript + Vite, Tailwind CSS, Zustand (state, persisted to `localStorage`), React Router, and Recharts. Everything runs entirely in the browser — no backend or account required, and your data stays on this device.
+Built with React + TypeScript + Vite, Tailwind CSS, Zustand (state, persisted to `localStorage`), React Router, and Recharts. Everything runs entirely in the browser — no backend or account required, and your data stays on this device. It's also an installable PWA (works offline, adds a home-screen icon) once built for production.
 
 ## Features
 
