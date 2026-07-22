@@ -27,10 +27,11 @@ export default function MealForm({
   const [cuisineId, setCuisineId] = useState<string | null>(initial?.cuisineId ?? null);
   const [favourite, setFavourite] = useState(initial?.favourite ?? false);
   const [ingredients, setIngredients] = useState<MealIngredient[]>(
-    initial?.ingredients ?? (foods[0] ? [{ foodId: foods[0].id, amount: defaultAmountForFood(foods[0]) }] : [])
+    initial?.ingredients ?? [{ foodId: '', amount: { mode: 'weight', quantity: 100 } }]
   );
   const [recipeSteps, setRecipeSteps] = useState<string[]>(initial?.recipeSteps ?? []);
   const [notes, setNotes] = useState(initial?.notes ?? '');
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   const previewMeal = useMemo<Meal>(
     () => ({
@@ -58,8 +59,8 @@ export default function MealForm({
   }
 
   function addIngredient() {
-    if (foods.length === 0) return;
-    setIngredients((prev) => [...prev, { foodId: foods[0].id, amount: defaultAmountForFood(foods[0]) }]);
+    setFocusIndex(ingredients.length);
+    setIngredients((prev) => [...prev, { foodId: '', amount: { mode: 'weight', quantity: 100 } }]);
   }
 
   function updateStep(index: number, value: string) {
@@ -76,13 +77,14 @@ export default function MealForm({
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!name.trim() || ingredients.length === 0) return;
+    const validIngredients = ingredients.filter((ing) => ing.foodId);
+    if (!name.trim() || validIngredients.length === 0) return;
     const cleanedSteps = recipeSteps.map((s) => s.trim()).filter(Boolean);
     onSubmit({
       name: name.trim(),
       cuisineId,
       favourite,
-      ingredients,
+      ingredients: validIngredients,
       recipeSteps: cleanedSteps.length > 0 ? cleanedSteps : undefined,
       notes: notes.trim() || undefined,
     });
@@ -139,8 +141,9 @@ export default function MealForm({
                   foods={sortedFoods}
                   value={ing.foodId}
                   onChange={(id) => updateIngredient(i, { foodId: id, amount: defaultAmountForFood(foodsById.get(id)) })}
+                  autoFocus={i === focusIndex}
                 />
-                <AmountInput food={food} amount={ing.amount} onChange={(amount) => updateIngredient(i, { amount })} />
+                {food && <AmountInput food={food} amount={ing.amount} onChange={(amount) => updateIngredient(i, { amount })} />}
                 <button
                   type="button"
                   onClick={() => removeIngredient(i)}

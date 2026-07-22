@@ -30,8 +30,8 @@ export default function AddLogEntryForm({
 
   const [sourceType, setSourceType] = useState<'food' | 'meal'>('food');
   const [mealType, setMealType] = useState<MealType>(defaultMealType);
-  const [foodId, setFoodId] = useState(sortedFoods[0]?.id ?? '');
-  const [amount, setAmount] = useState<FoodAmount>(defaultAmountForFood(sortedFoods[0]));
+  const [foodId, setFoodId] = useState('');
+  const [amount, setAmount] = useState<FoodAmount>({ mode: 'weight', quantity: 100 });
   const [mealId, setMealId] = useState(sortedMeals[0]?.id ?? '');
   const [servings, setServings] = useState(1);
   const [showAddFood, setShowAddFood] = useState(false);
@@ -104,16 +104,19 @@ export default function AddLogEntryForm({
               <FoodSearchSelect
                 foods={sortedFoods}
                 value={foodId}
+                autoFocus
                 onChange={(id) => {
                   setFoodId(id);
                   setAmount(defaultAmountForFood(foodsById.get(id)));
                 }}
               />
             </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted">Quantity</label>
-              <AmountInput food={selectedFood} amount={amount} onChange={setAmount} />
-            </div>
+            {selectedFood && (
+              <div>
+                <label className="mb-1 block text-xs font-medium text-muted">Quantity</label>
+                <AmountInput food={selectedFood} amount={amount} onChange={setAmount} />
+              </div>
+            )}
           </div>
           <button
             type="button"

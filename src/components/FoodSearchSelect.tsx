@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Search } from 'lucide-react';
 import type { Food } from '../types';
 
 const inputClass =
@@ -11,15 +10,17 @@ export default function FoodSearchSelect({
   value,
   onChange,
   className = '',
+  autoFocus = false,
 }: {
   foods: Food[];
   value: string;
   onChange: (foodId: string) => void;
   className?: string;
+  autoFocus?: boolean;
 }) {
   const selectedFood = foods.find((f) => f.id === value);
   const [query, setQuery] = useState(selectedFood?.name ?? '');
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(autoFocus);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,23 +46,21 @@ export default function FoodSearchSelect({
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
-      <div className="relative">
-        <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-subtle" />
-        <input
-          type="text"
-          className={`${inputClass} pl-8`}
-          value={query}
-          placeholder="Search foods…"
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setOpen(true);
-          }}
-          onFocus={(e) => {
-            setOpen(true);
-            e.target.select();
-          }}
-        />
-      </div>
+      <input
+        type="text"
+        autoFocus={autoFocus}
+        className={inputClass}
+        value={query}
+        placeholder="Search foods…"
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={(e) => {
+          setOpen(true);
+          e.target.select();
+        }}
+      />
       {open && (
         <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
           {results.length === 0 ? (
