@@ -3,12 +3,11 @@ import { Plus } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { FoodAmount, LogEntry, MealType } from '../types';
 import { defaultAmountForFood, foodMacrosForAmount, mealMacrosPerServing, scaleMacros } from '../utils/macros';
+import { MEAL_TYPE_ORDER } from '../utils/mealTime';
 import MacroBadges from './MacroBadges';
 import AmountInput from './AmountInput';
 import Modal from './Modal';
 import FoodForm, { type FoodFormValues } from './FoodForm';
-
-const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Snack', 'Dinner'];
 
 export default function AddLogEntryForm({
   date,
@@ -88,7 +87,7 @@ export default function AddLogEntryForm({
       <div>
         <label className="mb-1 block text-xs font-medium text-muted">Meal time</label>
         <select className={inputClass} value={mealType} onChange={(e) => setMealType(e.target.value as MealType)}>
-          {mealTypes.map((m) => (
+          {MEAL_TYPE_ORDER.map((m) => (
             <option key={m} value={m}>
               {m}
             </option>

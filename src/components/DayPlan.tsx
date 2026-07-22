@@ -4,12 +4,11 @@ import { useAppStore } from '../store/useAppStore';
 import type { MealType } from '../types';
 import { addMacros, emptyMacros, logEntryMacros } from '../utils/macros';
 import { describeLogEntry } from '../utils/logEntry';
+import { MEAL_TYPE_ORDER } from '../utils/mealTime';
 import MacroSummary from './MacroSummary';
 import MacroBadges from './MacroBadges';
 import Modal from './Modal';
 import AddLogEntryForm from './AddLogEntryForm';
-
-const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Snack', 'Dinner'];
 
 /** Renders the macro summary + per-meal-time entries (with add/remove) for a single date. Shared by the daily Log and the calendar Planner's day-detail view. */
 export default function DayPlan({ date, showSummary = true }: { date: string; showSummary?: boolean }) {
@@ -37,7 +36,7 @@ export default function DayPlan({ date, showSummary = true }: { date: string; sh
       {showSummary && <MacroSummary totals={dayTotals} targets={macroTargets} />}
 
       <div className="space-y-4">
-        {mealTypes.map((mealType) => {
+        {MEAL_TYPE_ORDER.map((mealType) => {
           const entries = entriesForDay.filter((e) => e.mealType === mealType);
           const mealTotals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
           return (

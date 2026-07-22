@@ -4,7 +4,7 @@ import { useAppStore } from '../store/useAppStore';
 import { addDays, formatDisplayDate, todayStr } from '../utils/date';
 import { addMacros, emptyMacros, logEntryMacros } from '../utils/macros';
 import { describeLogEntry } from '../utils/logEntry';
-import { currentMealType } from '../utils/mealTime';
+import { currentMealType, sortByMealType } from '../utils/mealTime';
 import { getWeekDates, weekRangeLabel } from '../utils/week';
 import WeekDayCard from '../components/WeekDayCard';
 import Modal from '../components/Modal';
@@ -60,7 +60,7 @@ export default function PlannerPage() {
   const desktopColumns = [weekDates.slice(0, 4), weekDates.slice(4, 7)];
 
   function renderCard(date: string) {
-    const entries = entriesByDate.get(date) ?? [];
+    const entries = sortByMealType(entriesByDate.get(date) ?? []);
     const totals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
     const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById, { showMealType: true }));
     return (
