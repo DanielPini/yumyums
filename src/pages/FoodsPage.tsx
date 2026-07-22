@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
+import Fuse from 'fuse.js';
 import { useAppStore } from '../store/useAppStore';
 import type { Food, FoodCategory } from '../types';
+import { FOOD_FUSE_OPTIONS } from '../utils/foodSearch';
 import Modal from '../components/Modal';
 import FoodForm, { type FoodFormValues } from '../components/FoodForm';
 import MacroBadges from '../components/MacroBadges';
@@ -33,13 +35,13 @@ export default function FoodsPage() {
     [foods]
   );
 
+  const fuse = useMemo(() => new Fuse(foods, FOOD_FUSE_OPTIONS), [foods]);
+
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return foods
-      .filter((f) => (categoryFilter === 'All' ? true : f.category === categoryFilter))
-      .filter((f) => (q ? f.name.toLowerCase().includes(q) || f.aliases?.some((a) => a.toLowerCase().includes(q)) : true))
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [foods, query, categoryFilter]);
+    const q = query.trim();
+    const bySearch = q ? fuse.search(q).map((r) => r.item) : [...foods].sort((a, b) => a.name.localeCompare(b.name));
+    return bySearch.filter((f) => (categoryFilter === 'All' ? true : f.category === categoryFilter));
+  }, [foods, fuse, query, categoryFilter]);
 
   function handleAdd(values: FoodFormValues) {
     addFood(values);

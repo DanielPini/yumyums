@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Fuse from 'fuse.js';
 import type { Food } from '../types';
+import { FOOD_FUSE_OPTIONS } from '../utils/foodSearch';
 
 const inputClass =
   'w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100';
@@ -38,13 +40,13 @@ export default function FoodSearchSelect({
     return () => document.removeEventListener('mousedown', onClickOutside);
   }, [selectedFood]);
 
+  const fuse = useMemo(() => new Fuse(foods, FOOD_FUSE_OPTIONS), [foods]);
+
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const pool = q
-      ? foods.filter((f) => f.name.toLowerCase().includes(q) || f.aliases?.some((a) => a.toLowerCase().includes(q)))
-      : foods;
+    const q = query.trim();
+    const pool = q ? fuse.search(q).map((r) => r.item) : foods;
     return pool.slice(0, 30);
-  }, [foods, query]);
+  }, [fuse, foods, query]);
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>

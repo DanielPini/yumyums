@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Salad, UtensilsCrossed, Globe2 } from 'lucide-react';
+import Fuse from 'fuse.js';
 import { useAppStore } from '../store/useAppStore';
+import { FOOD_FUSE_OPTIONS, NAME_FUSE_OPTIONS } from '../utils/foodSearch';
+import type { Cuisine, Meal } from '../types';
 
 interface Result {
   id: string;
@@ -31,28 +34,30 @@ export default function SearchBar() {
     return () => document.removeEventListener('mousedown', onClickOutside);
   }, []);
 
+  const foodFuse = useMemo(() => new Fuse(foods, FOOD_FUSE_OPTIONS), [foods]);
+  const mealFuse = useMemo(() => new Fuse(meals, NAME_FUSE_OPTIONS), [meals]);
+  const cuisineFuse = useMemo(() => new Fuse(cuisines, NAME_FUSE_OPTIONS), [cuisines]);
+
   const results = useMemo<Result[]>(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim();
     if (!q) return [];
+    const qLower = q.toLowerCase();
 
-    const foodResults: Result[] = foods
-      .filter(
-        (f) =>
-          f.name.toLowerCase().includes(q) ||
-          f.category.toLowerCase().includes(q) ||
-          f.aliases?.some((a) => a.toLowerCase().includes(q))
-      )
-      .slice(0, 5)
-      .map((f) => ({
-        id: `food-${f.id}`,
-        label: f.name,
-        sublabel: `Food · ${f.category}`,
-        icon: <Salad size={16} className="text-brand-500" />,
-        onSelect: () => navigate(`/foods?q=${encodeURIComponent(f.name)}`),
-      }));
+    const categoryMatches = foods.filter((f) => f.category.toLowerCase().includes(qLower));
+    const fuzzyFoods = foodFuse.search(q).map((r) => r.item);
+    const foodMatches = [...new Map([...fuzzyFoods, ...categoryMatches].map((f) => [f.id, f])).values()];
 
-    const mealResults: Result[] = meals
-      .filter((m) => m.name.toLowerCase().includes(q))
+    const foodResults: Result[] = foodMatches.slice(0, 5).map((f) => ({
+      id: `food-${f.id}`,
+      label: f.name,
+      sublabel: `Food · ${f.category}`,
+      icon: <Salad size={16} className="text-brand-500" />,
+      onSelect: () => navigate(`/foods?q=${encodeURIComponent(f.name)}`),
+    }));
+
+    const mealResults: Result[] = mealFuse
+      .search(q)
+      .map((r) => r.item as Meal)
       .slice(0, 5)
       .map((m) => ({
         id: `meal-${m.id}`,
@@ -62,8 +67,9 @@ export default function SearchBar() {
         onSelect: () => navigate(`/meals?q=${encodeURIComponent(m.name)}`),
       }));
 
-    const cuisineResults: Result[] = cuisines
-      .filter((c) => c.name.toLowerCase().includes(q))
+    const cuisineResults: Result[] = cuisineFuse
+      .search(q)
+      .map((r) => r.item as Cuisine)
       .slice(0, 5)
       .map((c) => ({
         id: `cuisine-${c.id}`,
@@ -74,7 +80,7 @@ export default function SearchBar() {
       }));
 
     return [...foodResults, ...mealResults, ...cuisineResults];
-  }, [query, foods, meals, cuisines, navigate]);
+  }, [query, foods, foodFuse, mealFuse, cuisineFuse, navigate]);
 
   return (
     <div ref={containerRef} className="relative w-full max-w-md">
