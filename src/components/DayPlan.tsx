@@ -9,7 +9,7 @@ import MacroBadges from './MacroBadges';
 import Modal from './Modal';
 import AddLogEntryForm from './AddLogEntryForm';
 
-const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Snack', 'Dinner'];
 
 /** Renders the macro summary + per-meal-time entries (with add/remove) for a single date. Shared by the daily Log and the calendar Planner's day-detail view. */
 export default function DayPlan({ date, showSummary = true }: { date: string; showSummary?: boolean }) {

@@ -8,7 +8,7 @@ import AmountInput from './AmountInput';
 import Modal from './Modal';
 import FoodForm, { type FoodFormValues } from './FoodForm';
 
-const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+const mealTypes: MealType[] = ['Breakfast', 'Lunch', 'Snack', 'Dinner'];
 
 export default function AddLogEntryForm({
   date,

@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
-import { getMonthGrid, monthLabel, WEEKDAY_LABELS } from '../utils/calendar';
-import { formatDisplayDate, todayStr } from '../utils/date';
+import { addDays, formatDisplayDate, todayStr } from '../utils/date';
 import { addMacros, emptyMacros, logEntryMacros } from '../utils/macros';
 import { describeLogEntry } from '../utils/logEntry';
 import { currentMealType } from '../utils/mealTime';
-import PlannerDayCell from '../components/PlannerDayCell';
+import { getWeekDates, weekRangeLabel } from '../utils/week';
+import WeekDayCard from '../components/WeekDayCard';
 import Modal from '../components/Modal';
 import AddLogEntryForm from '../components/AddLogEntryForm';
 import DayPlan from '../components/DayPlan';
@@ -14,8 +14,7 @@ import TargetsModal from '../components/TargetsModal';
 
 export default function PlannerPage() {
   const today = todayStr();
-  const [year, setYear] = useState(() => Number(today.slice(0, 4)));
-  const [month, setMonth] = useState(() => Number(today.slice(5, 7)) - 1);
+  const [weekAnchor, setWeekAnchor] = useState(today);
   const [quickAddDate, setQuickAddDate] = useState<string | null>(null);
   const [detailDate, setDetailDate] = useState<string | null>(null);
   const [editingTargets, setEditingTargets] = useState(false);
@@ -30,7 +29,8 @@ export default function PlannerPage() {
   const foodsById = useMemo(() => new Map(foods.map((f) => [f.id, f])), [foods]);
   const mealsById = useMemo(() => new Map(meals.map((m) => [m.id, m])), [meals]);
 
-  const cells = useMemo(() => getMonthGrid(year, month), [year, month]);
+  const weekDates = useMemo(() => getWeekDates(weekAnchor), [weekAnchor]);
+  const isCurrentWeek = weekDates.includes(today);
 
   const entriesByDate = useMemo(() => {
     const map = new Map<string, typeof log>();
@@ -42,53 +42,61 @@ export default function PlannerPage() {
     return map;
   }, [log]);
 
-  function goToPrevMonth() {
-    if (month === 0) {
-      setYear((y) => y - 1);
-      setMonth(11);
-    } else {
-      setMonth((m) => m - 1);
-    }
+  function goToPrevWeek() {
+    setWeekAnchor((d) => addDays(d, -7));
   }
 
-  function goToNextMonth() {
-    if (month === 11) {
-      setYear((y) => y + 1);
-      setMonth(0);
-    } else {
-      setMonth((m) => m + 1);
-    }
+  function goToNextWeek() {
+    setWeekAnchor((d) => addDays(d, 7));
   }
 
-  function goToThisMonth() {
-    setYear(Number(today.slice(0, 4)));
-    setMonth(Number(today.slice(5, 7)) - 1);
+  function goToThisWeek() {
+    setWeekAnchor(today);
   }
 
-  const isCurrentMonth = year === Number(today.slice(0, 4)) && month === Number(today.slice(5, 7)) - 1;
+  // 3-column desktop split: Mon-Wed / Thu-Fri / Sat-Sun. 2-column tablet split: weekdays / weekend.
+  const desktopColumns = [weekDates.slice(0, 3), weekDates.slice(3, 5), weekDates.slice(5, 7)];
+  const tabletColumns = [weekDates.slice(0, 5), weekDates.slice(5, 7)];
+
+  function renderCard(date: string) {
+    const entries = entriesByDate.get(date) ?? [];
+    const totals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
+    const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById));
+    return (
+      <WeekDayCard
+        key={date}
+        date={date}
+        isToday={date === today}
+        entryLabels={entryLabels}
+        totals={totals}
+        onAdd={() => setQuickAddDate(date)}
+        onOpen={() => setDetailDate(date)}
+      />
+    );
+  }
 
   return (
     <div className="mx-auto max-w-[1800px] space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button
-            onClick={goToPrevMonth}
+            onClick={goToPrevWeek}
             className="rounded-md p-1.5 text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
-            aria-label="Previous month"
+            aria-label="Previous week"
           >
             <ChevronLeft size={18} />
           </button>
-          <h1 className="w-44 text-center text-lg font-semibold">{monthLabel(year, month)}</h1>
+          <h1 className="text-center text-lg font-semibold">{weekRangeLabel(weekDates)}</h1>
           <button
-            onClick={goToNextMonth}
+            onClick={goToNextWeek}
             className="rounded-md p-1.5 text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
-            aria-label="Next month"
+            aria-label="Next week"
           >
             <ChevronRight size={18} />
           </button>
-          {!isCurrentMonth && (
-            <button onClick={goToThisMonth} className="ml-1 text-xs font-medium text-brand-600 hover:text-brand-700">
-              This month
+          {!isCurrentWeek && (
+            <button onClick={goToThisWeek} className="ml-1 text-xs font-medium text-brand-600 hover:text-brand-700">
+              This week
             </button>
           )}
         </div>
@@ -103,32 +111,25 @@ export default function PlannerPage() {
         </div>
       </div>
 
-      <div className="@container">
-        <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-subtle sm:gap-2 sm:text-[clamp(0.6875rem,1.7cqw,1rem)]">
-          {WEEKDAY_LABELS.map((d) => (
-            <div key={d}>{d}</div>
-          ))}
-        </div>
+      {/* Mobile: single column, all 7 days stacked. */}
+      <div className="flex flex-col gap-3 sm:hidden">{weekDates.map(renderCard)}</div>
 
-        <div className="mt-1.5 grid grid-cols-7 gap-1.5 sm:mt-2 sm:gap-2">
-          {cells.map((cell) => {
-            const entries = entriesByDate.get(cell.date) ?? [];
-            const totals = entries.reduce((total, e) => addMacros(total, logEntryMacros(e, foodsById, mealsById)), emptyMacros());
-            const entryLabels = entries.map((e) => describeLogEntry(e, foodsById, mealsById));
-            return (
-              <PlannerDayCell
-                key={cell.date}
-                dayNumber={Number(cell.date.slice(8, 10))}
-                isToday={cell.date === today}
-                inCurrentMonth={cell.inCurrentMonth}
-                entryLabels={entryLabels}
-                totals={totals}
-                onAdd={() => setQuickAddDate(cell.date)}
-                onOpen={() => setDetailDate(cell.date)}
-              />
-            );
-          })}
-        </div>
+      {/* Tablet: 2 columns — weekdays, weekend. */}
+      <div className="hidden gap-3 sm:grid sm:grid-cols-2 lg:hidden">
+        {tabletColumns.map((col, i) => (
+          <div key={i} className="flex flex-col gap-3">
+            {col.map(renderCard)}
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: 3 columns — Mon-Wed, Thu-Fri, Sat-Sun. */}
+      <div className="hidden gap-3 lg:grid lg:grid-cols-3">
+        {desktopColumns.map((col, i) => (
+          <div key={i} className="flex flex-col gap-3">
+            {col.map(renderCard)}
+          </div>
+        ))}
       </div>
 
       {quickAddDate && (
