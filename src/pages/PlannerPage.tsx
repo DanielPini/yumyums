@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
+import { BarChart3, ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { addDays, formatDisplayDate, todayStr } from '../utils/date';
 import { addMacros, emptyMacros, logEntryMacros } from '../utils/macros';
@@ -11,6 +11,7 @@ import Modal from '../components/Modal';
 import AddLogEntryForm from '../components/AddLogEntryForm';
 import DayPlan from '../components/DayPlan';
 import TargetsModal from '../components/TargetsModal';
+import MonthSummaryModal from '../components/MonthSummaryModal';
 
 export default function PlannerPage() {
   const today = todayStr();
@@ -18,6 +19,7 @@ export default function PlannerPage() {
   const [quickAddDate, setQuickAddDate] = useState<string | null>(null);
   const [detailDate, setDetailDate] = useState<string | null>(null);
   const [editingTargets, setEditingTargets] = useState(false);
+  const [showMonthSummary, setShowMonthSummary] = useState(false);
 
   const log = useAppStore((s) => s.log);
   const foods = useAppStore((s) => s.foods);
@@ -102,6 +104,12 @@ export default function PlannerPage() {
         <div className="flex items-center gap-3">
           <p className="hidden text-xs text-subtle sm:block">Click a day to view/edit · use + to quick-add</p>
           <button
+            onClick={() => setShowMonthSummary(true)}
+            className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
+          >
+            <BarChart3 size={15} /> Summary
+          </button>
+          <button
             onClick={() => setEditingTargets(true)}
             className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-sm text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
           >
@@ -152,6 +160,8 @@ export default function PlannerPage() {
           onClose={() => setEditingTargets(false)}
         />
       )}
+
+      {showMonthSummary && <MonthSummaryModal onClose={() => setShowMonthSummary(false)} />}
     </div>
   );
 }

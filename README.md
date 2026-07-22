@@ -13,6 +13,7 @@ Built with React + TypeScript + Vite, Tailwind CSS, Zustand (state, persisted to
 - **Global search** — the header search box finds matches across foods, meals and cuisines.
 - **Appearance** — pick Light, Dark or System via the "Appearance" control (sidebar on desktop, palette icon in the header on mobile), plus an "Increased contrast" accessibility toggle that strengthens borders and secondary text, and 6 selectable color themes (Green, Ocean, Sunset, Berry, Violet, Slate). Your choice is saved and applied instantly, including on next visit.
 - **Shopping list** — a deduplicated checklist of every ingredient needed for what's logged today or in the future (meals are expanded into their ingredients, quantities summed across repeats), opened via the cart icon in the header. Check items off as you shop — they dim in place; items from past days drop off automatically as today moves forward.
+- **Month summary** — opened via "Summary" in the Planner header, with its own month navigation: your top 5 most-logged meals that month, and the overall protein/carb/fat split across everything logged.
 
 Comes pre-seeded with 141 foods, 20 meals (with full recipes — Indian dals and curries, Mexican mole/burritos/quesadillas/enchiladas, Vietnamese pho/bún/bánh mì/gỏi cuốn/bánh xèo, plus the original Italian/Mediterranean/American set) and 7 cuisines, with nutrition figures sourced from USDA-based data, so there's something to explore immediately — edit or delete freely.
 
