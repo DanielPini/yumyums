@@ -86,7 +86,14 @@ export interface LogEntry {
   /** Either a food logged directly (by weight or by piece) or a meal logged as a number of servings. */
   source:
     | { type: 'food'; foodId: string; amount: FoodAmount }
-    | { type: 'meal'; mealId: string; servings: number };
+    | {
+        type: 'meal';
+        mealId: string;
+        /** Servings logged as eaten by this person — drives their personal macro totals. */
+        servings: number;
+        /** How many people this batch was cooked for — drives shopping list quantities, independent of servings eaten. Defaults to the household size when unset. */
+        peopleServed?: number;
+      };
   createdAt: number;
 }
 

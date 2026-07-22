@@ -9,14 +9,17 @@ export interface ShoppingAmount {
 
 /**
  * Total quantity needed per food for everything logged today or later, keyed by foodId — meal
- * entries are expanded into their ingredients (scaled by servings). Entries dated before
- * `todayDate` are excluded, so totals naturally drop past days as soon as they're no longer
- * "today or later".
+ * entries are expanded into their ingredients, scaled by how many people that batch was cooked
+ * for (not by the logger's own servings-eaten, which drives their personal macro totals
+ * instead). Entries missing an explicit peopleServed fall back to `householdSize`. Entries dated
+ * before `todayDate` are excluded, so totals naturally drop past days as soon as they're no
+ * longer "today or later".
  */
 export function getUpcomingShoppingAmounts(
   log: LogEntry[],
   meals: Meal[],
-  todayDate: string
+  todayDate: string,
+  householdSize: number
 ): Map<string, ShoppingAmount> {
   const mealsById = new Map(meals.map((m) => [m.id, m]));
   const totals = new Map<string, ShoppingAmount>();
@@ -35,8 +38,9 @@ export function getUpcomingShoppingAmounts(
     } else {
       const meal = mealsById.get(entry.source.mealId);
       if (!meal) continue;
+      const peopleServed = entry.source.peopleServed ?? householdSize;
       for (const ingredient of meal.ingredients) {
-        add(ingredient.foodId, ingredient.amount, entry.source.servings);
+        add(ingredient.foodId, ingredient.amount, peopleServed);
       }
     }
   }

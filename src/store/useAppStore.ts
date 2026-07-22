@@ -32,6 +32,8 @@ interface AppState {
   cuisines: Cuisine[];
   log: LogEntry[];
   macroTargets: MacroTargets;
+  /** Default number of people meals are cooked for — used to scale the shopping list, independent of personal serving/macro tracking. */
+  householdSize: number;
 
   addFood: (food: Omit<Food, 'id' | 'createdAt'>) => string;
   updateFood: (id: string, food: Omit<Food, 'id' | 'createdAt'>) => void;
@@ -50,6 +52,8 @@ interface AppState {
   removeLogEntry: (id: string) => void;
 
   setMacroTargets: (targets: MacroTargets) => void;
+  setHouseholdSize: (size: number) => void;
+  adjustHouseholdSize: (delta: number) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -60,6 +64,7 @@ export const useAppStore = create<AppState>()(
       cuisines: seedCuisines,
       log: [],
       macroTargets: { calories: 2000, protein: 100, carbs: 250, fat: 65 },
+      householdSize: 1,
 
       addFood: (food) => {
         const id = uuid();
@@ -129,6 +134,8 @@ export const useAppStore = create<AppState>()(
         set((state) => ({ log: state.log.filter((l) => l.id !== id) })),
 
       setMacroTargets: (targets) => set({ macroTargets: targets }),
+      setHouseholdSize: (size) => set({ householdSize: Math.max(1, size) }),
+      adjustHouseholdSize: (delta) => set((state) => ({ householdSize: Math.max(1, state.householdSize + delta) })),
     }),
     {
       name: 'yumyums-store',

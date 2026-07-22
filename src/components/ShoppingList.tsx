@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, Copy } from 'lucide-react';
+import { Check, Copy, Minus, Plus, Users } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { useShoppingListStore } from '../store/useShoppingListStore';
 import { formatShoppingAmount, getUpcomingShoppingAmounts, type ShoppingAmount } from '../utils/shoppingList';
@@ -11,13 +11,15 @@ export default function ShoppingList() {
   const log = useAppStore((s) => s.log);
   const meals = useAppStore((s) => s.meals);
   const foods = useAppStore((s) => s.foods);
+  const householdSize = useAppStore((s) => s.householdSize);
+  const adjustHouseholdSize = useAppStore((s) => s.adjustHouseholdSize);
   const checkedFoodIds = useShoppingListStore((s) => s.checkedFoodIds);
   const toggleChecked = useShoppingListStore((s) => s.toggleChecked);
   const [copied, setCopied] = useState(false);
 
   const items = useMemo(() => {
     const foodsById = new Map(foods.map((f) => [f.id, f]));
-    const amounts = getUpcomingShoppingAmounts(log, meals, todayStr());
+    const amounts = getUpcomingShoppingAmounts(log, meals, todayStr(), householdSize);
     return [...amounts.entries()]
       .map(([foodId, amount]) => {
         const food = foodsById.get(foodId);
@@ -25,10 +27,43 @@ export default function ShoppingList() {
       })
       .filter((item): item is { food: Food; amount: ShoppingAmount } => !!item)
       .sort((a, b) => a.food.name.localeCompare(b.food.name));
-  }, [log, meals, foods]);
+  }, [log, meals, foods, householdSize]);
+
+  const householdControl = (
+    <div className="flex items-center justify-between rounded-md border border-border px-2.5 py-1.5 text-sm">
+      <span className="flex items-center gap-1.5 text-muted">
+        <Users size={14} /> Default household size
+      </span>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => adjustHouseholdSize(-1)}
+          disabled={householdSize <= 1}
+          className="rounded p-0.5 text-muted hover:bg-stone-100 disabled:opacity-30 dark:hover:bg-stone-800"
+          aria-label="Decrease household size"
+        >
+          <Minus size={14} />
+        </button>
+        <span className="w-4 text-center font-medium">{householdSize}</span>
+        <button
+          type="button"
+          onClick={() => adjustHouseholdSize(1)}
+          className="rounded p-0.5 text-muted hover:bg-stone-100 dark:hover:bg-stone-800"
+          aria-label="Increase household size"
+        >
+          <Plus size={14} />
+        </button>
+      </div>
+    </div>
+  );
 
   if (items.length === 0) {
-    return <p className="text-sm text-subtle">Nothing planned yet — foods you log for today or later show up here.</p>;
+    return (
+      <div className="space-y-3">
+        {householdControl}
+        <p className="text-sm text-subtle">Nothing planned yet — foods you log for today or later show up here.</p>
+      </div>
+    );
   }
 
   const uncheckedItems = items.filter(({ food }) => !checkedFoodIds[food.id]);
@@ -42,6 +77,7 @@ export default function ShoppingList() {
 
   return (
     <div className="space-y-2">
+      {householdControl}
       <button
         type="button"
         onClick={handleCopy}

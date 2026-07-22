@@ -24,6 +24,7 @@ export default function AddLogEntryForm({
   const foods = useAppStore((s) => s.foods);
   const meals = useAppStore((s) => s.meals);
   const addFood = useAppStore((s) => s.addFood);
+  const householdSize = useAppStore((s) => s.householdSize);
   const foodsById = useMemo(() => new Map(foods.map((f) => [f.id, f])), [foods]);
   const sortedFoods = useMemo(() => [...foods].sort((a, b) => a.name.localeCompare(b.name)), [foods]);
   const sortedMeals = useMemo(() => [...meals].sort((a, b) => a.name.localeCompare(b.name)), [meals]);
@@ -34,6 +35,7 @@ export default function AddLogEntryForm({
   const [amount, setAmount] = useState<FoodAmount>({ mode: 'weight', quantity: 100 });
   const [mealId, setMealId] = useState(sortedMeals[0]?.id ?? '');
   const [servings, setServings] = useState(1);
+  const [peopleServed, setPeopleServed] = useState(householdSize);
   const [showAddFood, setShowAddFood] = useState(false);
 
   const selectedFood = foodsById.get(foodId);
@@ -51,7 +53,7 @@ export default function AddLogEntryForm({
     if (sourceType === 'food' && foodId) {
       onSubmit({ date, mealType, source: { type: 'food', foodId, amount } });
     } else if (sourceType === 'meal' && mealId) {
-      onSubmit({ date, mealType, source: { type: 'meal', mealId, servings } });
+      onSubmit({ date, mealType, source: { type: 'meal', mealId, servings, peopleServed } });
     }
   }
 
@@ -127,8 +129,8 @@ export default function AddLogEntryForm({
           </button>
         </div>
       ) : (
-        <div className="flex gap-3">
-          <div className="flex-1">
+        <div className="space-y-2">
+          <div>
             <label className="mb-1 block text-xs font-medium text-muted">Meal</label>
             <select className={inputClass} value={mealId} onChange={(e) => setMealId(e.target.value)}>
               {sortedMeals.map((m) => (
@@ -138,17 +140,33 @@ export default function AddLogEntryForm({
               ))}
             </select>
           </div>
-          <div className="w-28">
-            <label className="mb-1 block text-xs font-medium text-muted">Servings</label>
-            <input
-              type="number"
-              min="0"
-              step="any"
-              className={inputClass}
-              value={servings}
-              onChange={(e) => setServings(Number(e.target.value) || 0)}
-            />
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-muted">Servings (for you)</label>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                className={inputClass}
+                value={servings}
+                onChange={(e) => setServings(Number(e.target.value) || 0)}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-medium text-muted">Cooking for (people)</label>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                className={inputClass}
+                value={peopleServed}
+                onChange={(e) => setPeopleServed(Number(e.target.value) || 1)}
+              />
+            </div>
           </div>
+          <p className="text-[11px] text-subtle">
+            Servings only affects your own log; "cooking for" scales the shopping list.
+          </p>
         </div>
       )}
 
