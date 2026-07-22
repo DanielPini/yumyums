@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useShoppingListStore } from '../store/useShoppingListStore';
-import { getUpcomingShoppingFoodIds } from '../utils/shoppingList';
+import { formatShoppingAmount, getUpcomingShoppingAmounts, type ShoppingAmount } from '../utils/shoppingList';
 import { todayStr } from '../utils/date';
+import type { Food } from '../types';
 
 /** Deduplicated checklist of ingredients needed for everything logged today or later. Shared by the desktop sidebar panel and the mobile modal. */
 export default function ShoppingList() {
@@ -14,11 +15,14 @@ export default function ShoppingList() {
 
   const items = useMemo(() => {
     const foodsById = new Map(foods.map((f) => [f.id, f]));
-    const ids = getUpcomingShoppingFoodIds(log, meals, todayStr());
-    return ids
-      .map((id) => foodsById.get(id))
-      .filter((f): f is NonNullable<typeof f> => !!f)
-      .sort((a, b) => a.name.localeCompare(b.name));
+    const amounts = getUpcomingShoppingAmounts(log, meals, todayStr());
+    return [...amounts.entries()]
+      .map(([foodId, amount]) => {
+        const food = foodsById.get(foodId);
+        return food ? { food, amount } : null;
+      })
+      .filter((item): item is { food: Food; amount: ShoppingAmount } => !!item)
+      .sort((a, b) => a.food.name.localeCompare(b.food.name));
   }, [log, meals, foods]);
 
   if (items.length === 0) {
@@ -27,7 +31,7 @@ export default function ShoppingList() {
 
   return (
     <ul className="space-y-0.5">
-      {items.map((food) => {
+      {items.map(({ food, amount }) => {
         const checked = !!checkedFoodIds[food.id];
         return (
           <li key={food.id}>
@@ -39,6 +43,9 @@ export default function ShoppingList() {
                 className="h-4 w-4 shrink-0 rounded accent-brand-600"
               />
               <span className={`truncate ${checked ? 'text-stone-300 dark:text-stone-600' : ''}`}>{food.name}</span>
+              <span className={`ml-auto shrink-0 text-xs ${checked ? 'text-stone-300 dark:text-stone-600' : 'text-subtle'}`}>
+                {formatShoppingAmount(food, amount)}
+              </span>
             </label>
           </li>
         );
