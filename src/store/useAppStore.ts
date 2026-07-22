@@ -26,6 +26,43 @@ function dropLegacyLogEntries(log: LogEntry[]): LogEntry[] {
   return log.filter((l) => l.source.type === 'meal' || (l.source.type === 'food' && 'amount' in l.source));
 }
 
+/**
+ * Re-syncs display-only fields (pieceLabel, defaultMode) from the current seed data onto
+ * already-persisted foods that match by id. Unlike the rest of a food's data, these are app
+ * vocabulary/formatting choices rather than user edits, so — unlike macros or names — they
+ * should always reflect the latest seed data even for users who persisted an older copy.
+ */
+function syncSeedDisplayFields(foods: Food[], seed: Food[]): Food[] {
+  const seedById = new Map(seed.map((f) => [f.id, f]));
+  return foods.map((f) => {
+    const seedFood = seedById.get(f.id);
+    if (!seedFood) return f;
+    return { ...f, pieceLabel: seedFood.pieceLabel, defaultMode: seedFood.defaultMode };
+  });
+}
+
+/** Food ids retired from the seed catalog, mapped to their replacement — keeps old log entries/meals referencing them intact instead of silently losing their macros. */
+const REMOVED_FOOD_REDIRECTS: Record<string, string> = {
+  'food-egg-boiled': 'food-egg',
+  'food-egg-fried': 'food-egg',
+  'food-egg-scrambled': 'food-egg',
+};
+
+function redirectFoodId(id: string): string {
+  return REMOVED_FOOD_REDIRECTS[id] ?? id;
+}
+
+/** Drops foods retired from the seed catalog and redirects any meal ingredients or log entries that referenced them. */
+function migrateRemovedFoods(foods: Food[], meals: Meal[], log: LogEntry[]): { foods: Food[]; meals: Meal[]; log: LogEntry[] } {
+  return {
+    foods: foods.filter((f) => !(f.id in REMOVED_FOOD_REDIRECTS)),
+    meals: meals.map((m) => ({ ...m, ingredients: m.ingredients.map((i) => ({ ...i, foodId: redirectFoodId(i.foodId) })) })),
+    log: log.map((entry) =>
+      entry.source.type === 'food' ? { ...entry, source: { ...entry.source, foodId: redirectFoodId(entry.source.foodId) } } : entry
+    ),
+  };
+}
+
 interface AppState {
   foods: Food[];
   meals: Meal[];
@@ -49,6 +86,7 @@ interface AppState {
   toggleCuisineFavourite: (id: string) => void;
 
   addLogEntry: (entry: Omit<LogEntry, 'id' | 'createdAt'>) => void;
+  updateLogEntry: (id: string, entry: Omit<LogEntry, 'id' | 'createdAt'>) => void;
   removeLogEntry: (id: string) => void;
 
   setMacroTargets: (targets: MacroTargets) => void;
@@ -130,6 +168,10 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           log: [...state.log, { ...entry, id: uuid(), createdAt: Date.now() }],
         })),
+      updateLogEntry: (id, entry) =>
+        set((state) => ({
+          log: state.log.map((l) => (l.id === id ? { ...l, ...entry } : l)),
+        })),
       removeLogEntry: (id) =>
         set((state) => ({ log: state.log.filter((l) => l.id !== id) })),
 
@@ -144,13 +186,16 @@ export const useAppStore = create<AppState>()(
         const safeFoods = dropLegacyFoods(persisted.foods ?? []);
         const safeMeals = dropLegacyMeals(persisted.meals ?? []);
         const safeLog = dropLegacyLogEntries(persisted.log ?? []);
+        const mergedFoods = syncSeedDisplayFields(mergeSeedById(safeFoods, seedFoods), seedFoods);
+        const mergedMeals = mergeSeedById(safeMeals, seedMeals);
+        const migrated = migrateRemovedFoods(mergedFoods, mergedMeals, safeLog);
         return {
           ...currentState,
           ...persisted,
-          foods: mergeSeedById(safeFoods, seedFoods),
-          meals: mergeSeedById(safeMeals, seedMeals),
+          foods: migrated.foods,
+          meals: migrated.meals,
           cuisines: mergeSeedById(persisted.cuisines, seedCuisines),
-          log: safeLog,
+          log: migrated.log,
         };
       },
     }
