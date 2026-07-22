@@ -5,6 +5,7 @@ import { useAppStore } from '../store/useAppStore';
 import { defaultAmountForFood, mealMacrosPerServing } from '../utils/macros';
 import MacroBadges from './MacroBadges';
 import AmountInput from './AmountInput';
+import FoodSearchSelect from './FoodSearchSelect';
 
 export type MealFormValues = Omit<Meal, 'id' | 'createdAt'>;
 
@@ -133,17 +134,12 @@ export default function MealForm({
             const food = foodsById.get(ing.foodId);
             return (
               <div key={i} className="flex items-center gap-2">
-                <select
-                  className={`${inputClass} flex-1`}
+                <FoodSearchSelect
+                  className="flex-1"
+                  foods={sortedFoods}
                   value={ing.foodId}
-                  onChange={(e) => updateIngredient(i, { foodId: e.target.value, amount: defaultAmountForFood(foodsById.get(e.target.value)) })}
-                >
-                  {sortedFoods.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(id) => updateIngredient(i, { foodId: id, amount: defaultAmountForFood(foodsById.get(id)) })}
+                />
                 <AmountInput food={food} amount={ing.amount} onChange={(amount) => updateIngredient(i, { amount })} />
                 <button
                   type="button"

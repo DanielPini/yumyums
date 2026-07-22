@@ -6,6 +6,7 @@ import { defaultAmountForFood, foodMacrosForAmount, mealMacrosPerServing, scaleM
 import { MEAL_TYPE_ORDER } from '../utils/mealTime';
 import MacroBadges from './MacroBadges';
 import AmountInput from './AmountInput';
+import FoodSearchSelect from './FoodSearchSelect';
 import Modal from './Modal';
 import FoodForm, { type FoodFormValues } from './FoodForm';
 
@@ -100,20 +101,14 @@ export default function AddLogEntryForm({
           <div className="flex items-end gap-3">
             <div className="flex-1">
               <label className="mb-1 block text-xs font-medium text-muted">Food</label>
-              <select
-                className={inputClass}
+              <FoodSearchSelect
+                foods={sortedFoods}
                 value={foodId}
-                onChange={(e) => {
-                  setFoodId(e.target.value);
-                  setAmount(defaultAmountForFood(foodsById.get(e.target.value)));
+                onChange={(id) => {
+                  setFoodId(id);
+                  setAmount(defaultAmountForFood(foodsById.get(id)));
                 }}
-              >
-                {sortedFoods.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-muted">Quantity</label>
